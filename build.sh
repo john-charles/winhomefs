@@ -1,2 +1,2 @@
 #!/bin/sh
-gcc `pkg-config fuse --cflags --libs` winhomefs.c -o winhomefs
+gcc `pkg-config fuse --cflags --libs` -g winhomefs.c -o winhomefs

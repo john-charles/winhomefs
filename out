@@ -1,0 +1,11 @@
+Validating target directory /mnt/Personal
+Found "Users" folder, asuming windows version Vista and above!
+Valideated /mnt/Personal/Users
+in resolve
+success == 0
+result1="/john-charles/.config/banshee-1"
+result2="/john-charles/$	па$	)"
+result3=".config/banshee-1"
+buff_size = 8
+regex_error Success
+

@@ -1,0 +1,20 @@
+Validating target directory /mnt/Personal
+Found "Users" folder, asuming windows version Vista and above!
+Valideated /mnt/Personal/Users
+in resolve.
+allocated resolve_t memory...
+/mnt/Personal/Users
+/mnt/Personal/Users/.hidden
+opening /mnt/Personal/Users/.hidden
+file successfully opened...
+file length is 18
+read = 5
+josh
+read = 6
+sarah
+read = 6
+Sasha
+read = 1
+
+read = -1
+
