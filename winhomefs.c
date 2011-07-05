@@ -500,12 +500,15 @@ char * copystr( char * str, int begin, int end ){
   
 
 char ** append( char ** list, int * list_size, char * string, int copy ){
-  
+  printf("in append, list_size = %i, value to append = %s\n", *list_size, string );
   if( *list_size == 0 ){
     list = realloc( list, sizeof( char ** ) );
     *list_size = 1;
   } else {
-    list = realloc( list, sizeof( char ** ) * ++(*list_size) );
+    int next_size = sizeof( char ** ) * ++(*list_size);
+    printf("after realloc size will be %i\n", next_size );
+    printf("list to be realloced is %i\n", (int) list );
+    list = realloc( list, next_size );
   }
   
   if( copy ){
@@ -580,12 +583,9 @@ const char ** load_hidden( const resolve_t * info ){
     
     int i = 0;
     char * temp = 0;
-    for( i = 0; i < info->hidden_size; i++ ){
-      
-      final_list->list = append( final_list->list, &final_list->leng, info->hidden[i], 1 );
-      
-    }
-      
+    
+    
+    return final_list;    
       
     
 }

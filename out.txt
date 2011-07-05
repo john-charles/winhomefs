@@ -1,20 +1,349 @@
-Validating target directory /mnt/Personal
-Found "Users" folder, asuming windows version Vista and above!
-Valideated /mnt/Personal/Users
-in resolve.
-allocated resolve_t memory...
-/mnt/Personal/Users
-/mnt/Personal/Users/.hidden
-opening /mnt/Personal/Users/.hidden
-file successfully opened...
-file length is 18
-read = 5
-josh
-read = 6
-sarah
-read = 6
-Sasha
-read = 1
-
-read = -1
-
+In file included from initialization.c:4:0:
+/usr/include/stdio.h: In function ‘initialize_default_hidden_lists’:
+/usr/include/stdio.h:49:25: error: storage class specified for parameter ‘FILE’
+/usr/include/stdio.h:65:25: error: storage class specified for parameter ‘__FILE’
+In file included from /usr/include/_G_config.h:20:0,
+                 from /usr/include/libio.h:32,
+                 from /usr/include/stdio.h:75,
+                 from initialization.c:4:
+/usr/include/wchar.h:95:3: error: storage class specified for parameter ‘__mbstate_t’
+In file included from /usr/include/libio.h:32:0,
+                 from /usr/include/stdio.h:75,
+                 from initialization.c:4:
+/usr/include/_G_config.h:25:3: error: expected specifier-qualifier-list before ‘__mbstate_t’
+/usr/include/_G_config.h:26:3: error: storage class specified for parameter ‘_G_fpos_t’
+/usr/include/_G_config.h:30:3: error: expected specifier-qualifier-list before ‘__mbstate_t’
+/usr/include/_G_config.h:31:3: error: storage class specified for parameter ‘_G_fpos64_t’
+/usr/include/_G_config.h:53:13: error: storage class specified for parameter ‘_G_int16_t’
+/usr/include/_G_config.h:54:13: error: storage class specified for parameter ‘_G_int32_t’
+/usr/include/_G_config.h:55:22: error: storage class specified for parameter ‘_G_uint16_t’
+/usr/include/_G_config.h:56:22: error: storage class specified for parameter ‘_G_uint32_t’
+In file included from /usr/include/libio.h:53:0,
+                 from /usr/include/stdio.h:75,
+                 from initialization.c:4:
+/usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include/stdarg.h:40:27: error: storage class specified for parameter ‘__gnuc_va_list’
+In file included from /usr/include/stdio.h:75:0,
+                 from initialization.c:4:
+/usr/include/libio.h:180:14: error: storage class specified for parameter ‘_IO_lock_t’
+/usr/include/libio.h:310:3: error: expected specifier-qualifier-list before ‘_IO_lock_t’
+/usr/include/libio.h:341:25: error: storage class specified for parameter ‘_IO_FILE’
+/usr/include/libio.h:346:29: error: storage class specified for parameter ‘_IO_2_1_stdin_’
+/usr/include/libio.h:347:29: error: storage class specified for parameter ‘_IO_2_1_stdout_’
+/usr/include/libio.h:348:29: error: storage class specified for parameter ‘_IO_2_1_stderr_’
+/usr/include/libio.h:364:19: error: storage class specified for parameter ‘__io_read_fn’
+/usr/include/libio.h:372:19: error: storage class specified for parameter ‘__io_write_fn’
+/usr/include/libio.h:381:13: error: storage class specified for parameter ‘__io_seek_fn’
+/usr/include/libio.h:384:13: error: storage class specified for parameter ‘__io_close_fn’
+/usr/include/libio.h:416:34: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:417:30: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:418:33: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:460:31: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:461:31: error: expected declaration specifiers or ‘...’ before ‘_IO_FILE’
+/usr/include/libio.h:461:12: error: storage class specified for parameter ‘_IO_putc’
+/usr/include/libio.h:462:31: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:463:33: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:465:39: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:471:37: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:472:39: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:473:39: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:490:34: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:492:35: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:494:39: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:495:39: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:497:42: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:498:42: error: expected ‘)’ before ‘*’ token
+/usr/include/libio.h:500:44: error: expected ‘)’ before ‘*’ token
+In file included from initialization.c:4:0:
+/usr/include/stdio.h:80:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘va_list’
+/usr/include/stdio.h:113:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘fpos_t’
+In file included from initialization.c:4:0:
+/usr/include/stdio.h:165:25: error: storage class specified for parameter ‘stdin’
+/usr/include/stdio.h:166:25: error: storage class specified for parameter ‘stdout’
+/usr/include/stdio.h:167:25: error: storage class specified for parameter ‘stderr’
+/usr/include/stdio.h:175:12: error: storage class specified for parameter ‘remove’
+/usr/include/stdio.h:177:12: error: storage class specified for parameter ‘rename’
+/usr/include/stdio.h:182:12: error: storage class specified for parameter ‘renameat’
+/usr/include/stdio.h:195:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:206:14: error: storage class specified for parameter ‘tmpnam’
+/usr/include/stdio.h:212:14: error: storage class specified for parameter ‘tmpnam_r’
+/usr/include/stdio.h:224:14: error: storage class specified for parameter ‘tempnam’
+/usr/include/stdio.h:234:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:239:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:249:34: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:280:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:283:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:303:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:316:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:322:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:329:26: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:333:26: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:340:29: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:344:30: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:353:26: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:359:12: error: storage class specified for parameter ‘printf’
+/usr/include/stdio.h:361:12: error: storage class specified for parameter ‘sprintf’
+/usr/include/stdio.h:368:27: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:374:56: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:374:12: error: storage class specified for parameter ‘vprintf’
+/usr/include/stdio.h:377:8: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:376:12: error: storage class specified for parameter ‘vsprintf’
+/usr/include/stdio.h:383:12: error: storage class specified for parameter ‘snprintf’
+/usr/include/stdio.h:388:44: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:387:12: error: storage class specified for parameter ‘vsnprintf’
+/usr/include/stdio.h:415:8: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:414:12: error: storage class specified for parameter ‘vdprintf’
+/usr/include/stdio.h:417:12: error: storage class specified for parameter ‘dprintf’
+/usr/include/stdio.h:427:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:433:12: error: storage class specified for parameter ‘scanf’
+/usr/include/stdio.h:435:12: error: storage class specified for parameter ‘sscanf’
+/usr/include/stdio.h:445:12: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:448:12: error: storage class specified for parameter ‘scanf’
+/usr/include/stdio.h:448:12: error: redefinition of parameter ‘scanf’
+/usr/include/stdio.h:433:12: note: previous definition of ‘scanf’ was here
+/usr/include/stdio.h:450:12: error: storage class specified for parameter ‘sscanf’
+/usr/include/stdio.h:450:12: error: redefinition of parameter ‘sscanf’
+/usr/include/stdio.h:435:12: note: previous definition of ‘sscanf’ was here
+/usr/include/stdio.h:473:26: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:481:55: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:481:12: error: storage class specified for parameter ‘vscanf’
+/usr/include/stdio.h:486:42: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:485:12: error: storage class specified for parameter ‘vsscanf’
+/usr/include/stdio.h:496:12: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:501:12: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:501:12: error: storage class specified for parameter ‘vscanf’
+/usr/include/stdio.h:501:12: error: redefinition of parameter ‘vscanf’
+/usr/include/stdio.h:481:12: note: previous definition of ‘vscanf’ was here
+/usr/include/stdio.h:504:12: error: expected declaration specifiers or ‘...’ before ‘__gnuc_va_list’
+/usr/include/stdio.h:504:12: error: storage class specified for parameter ‘vsscanf’
+/usr/include/stdio.h:504:12: error: redefinition of parameter ‘vsscanf’
+/usr/include/stdio.h:485:12: note: previous definition of ‘vsscanf’ was here
+/usr/include/stdio.h:533:24: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:534:23: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:540:12: error: storage class specified for parameter ‘getchar’
+/usr/include/stdio.h:552:32: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:553:12: error: storage class specified for parameter ‘getchar_unlocked’
+/usr/include/stdio.h:563:33: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:575:28: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:575:12: error: storage class specified for parameter ‘fputc’
+/usr/include/stdio.h:576:27: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:576:12: error: storage class specified for parameter ‘putc’
+/usr/include/stdio.h:582:12: error: storage class specified for parameter ‘putchar’
+/usr/include/stdio.h:596:37: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:596:12: error: storage class specified for parameter ‘fputc_unlocked’
+/usr/include/stdio.h:604:36: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:604:12: error: storage class specified for parameter ‘putc_unlocked’
+/usr/include/stdio.h:605:12: error: storage class specified for parameter ‘putchar_unlocked’
+/usr/include/stdio.h:612:23: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:615:27: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:615:12: error: storage class specified for parameter ‘putw’
+/usr/include/stdio.h:624:52: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:624:14: error: storage class specified for parameter ‘fgets’
+/usr/include/stdio.h:632:14: error: storage class specified for parameter ‘gets’
+/usr/include/stdio.h:660:11: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:658:20: error: storage class specified for parameter ‘__getdelim’
+/usr/include/stdio.h:663:9: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:661:20: error: storage class specified for parameter ‘getdelim’
+/usr/include/stdio.h:673:8: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:671:20: error: storage class specified for parameter ‘getline’
+/usr/include/stdio.h:682:49: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:682:12: error: storage class specified for parameter ‘fputs’
+/usr/include/stdio.h:688:12: error: storage class specified for parameter ‘puts’
+/usr/include/stdio.h:695:29: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:695:12: error: storage class specified for parameter ‘ungetc’
+/usr/include/stdio.h:703:20: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:702:15: error: storage class specified for parameter ‘fread’
+/usr/include/stdio.h:709:21: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:708:15: error: storage class specified for parameter ‘fwrite’
+/usr/include/stdio.h:731:22: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:730:15: error: storage class specified for parameter ‘fread_unlocked’
+/usr/include/stdio.h:733:23: error: expected declaration specifiers or ‘...’ before ‘FILE’
+/usr/include/stdio.h:732:15: error: storage class specified for parameter ‘fwrite_unlocked’
+/usr/include/stdio.h:742:24: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:747:29: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:752:26: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:774:12: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:777:18: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:799:12: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:801:12: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:819:28: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:821:23: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:823:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:828:37: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:829:32: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:830:34: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:839:13: error: storage class specified for parameter ‘perror’
+In file included from /usr/include/stdio.h:846:0,
+                 from initialization.c:4:
+/usr/include/bits/sys_errlist.h:27:12: error: storage class specified for parameter ‘sys_nerr’
+/usr/include/bits/sys_errlist.h:28:30: error: storage class specified for parameter ‘sys_errlist’
+In file included from initialization.c:4:0:
+/usr/include/stdio.h:851:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:856:34: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:866:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/stdio.h:872:25: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:878:14: error: storage class specified for parameter ‘ctermid’
+/usr/include/stdio.h:906:29: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:910:31: error: expected ‘)’ before ‘*’ token
+/usr/include/stdio.h:913:31: error: expected ‘)’ before ‘*’ token
+In file included from initialization.c:5:0:
+/usr/include/dirent.h:128:28: error: storage class specified for parameter ‘DIR’
+/usr/include/dirent.h:135:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/dirent.h:142:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+/usr/include/dirent.h:150:26: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:166:23: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:190:12: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:209:28: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:215:26: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:218:30: error: expected ‘)’ before ‘*’ token
+/usr/include/dirent.h:224:23: error: expected ‘)’ before ‘*’ token
+In file included from initialization.c:5:0:
+/usr/include/dirent.h:260:12: error: storage class specified for parameter ‘scandir’
+/usr/include/dirent.h:290:12: error: storage class specified for parameter ‘alphasort’
+/usr/include/dirent.h:319:18: error: storage class specified for parameter ‘getdirentries’
+In file included from initialization.c:6:0:
+/usr/include/regex.h:37:18: error: storage class specified for parameter ‘s_reg_t’
+/usr/include/regex.h:38:27: error: storage class specified for parameter ‘active_reg_t’
+/usr/include/regex.h:45:27: error: storage class specified for parameter ‘reg_syntax_t’
+/usr/include/regex.h:187:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘re_syntax_options’
+/usr/include/regex.h:346:3: error: storage class specified for parameter ‘reg_errcode_t’
+/usr/include/regex.h:381:3: error: expected specifier-qualifier-list before ‘reg_syntax_t’
+/usr/include/regex.h:433:34: error: storage class specified for parameter ‘regex_t’
+/usr/include/regex.h:436:13: error: storage class specified for parameter ‘regoff_t’
+/usr/include/regex.h:464:3: error: expected specifier-qualifier-list before ‘regoff_t’
+/usr/include/regex.h:466:3: error: storage class specified for parameter ‘regmatch_t’
+/usr/include/regex.h:567:29: error: expected ‘)’ before ‘*’ token
+/usr/include/regex.h:571:35: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/usr/include/regex.h:576:54: error: expected ‘;’, ‘,’ or ‘)’ before ‘*’ token
+/usr/include/regex.h:579:30: error: expected ‘)’ before ‘*’ token
+initialization.c:8:15: error: storage class specified for parameter ‘root_path’
+initialization.c:9:15: error: storage class specified for parameter ‘winversion’
+initialization.c:11:55: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+initialization.c:53:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘regex_user_home_dir’
+initialization.c:54:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘regex_user_dot_folder’
+initialization.c:55:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘regex_user_doc_subdir’
+initialization.c:56:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘regex_user_mdocs_dir’
+initialization.c:58:24: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+initialization.c:100:2: error: expected declaration specifiers before ‘;’ token
+initialization.c:102:17: error: storage class specified for parameter ‘hidden_list_root’
+initialization.c:103:17: error: storage class specified for parameter ‘hidden_list_home’
+initialization.c:104:17: error: storage class specified for parameter ‘hidden_list_user’
+initialization.c:106:5: error: declaration for parameter ‘initialize_default_hidden_lists’ but no such parameter
+initialization.c:104:17: error: declaration for parameter ‘hidden_list_user’ but no such parameter
+initialization.c:103:17: error: declaration for parameter ‘hidden_list_home’ but no such parameter
+initialization.c:102:17: error: declaration for parameter ‘hidden_list_root’ but no such parameter
+initialization.c:9:15: error: declaration for parameter ‘winversion’ but no such parameter
+initialization.c:8:15: error: declaration for parameter ‘root_path’ but no such parameter
+/usr/include/regex.h:466:3: error: declaration for parameter ‘regmatch_t’ but no such parameter
+/usr/include/regex.h:436:13: error: declaration for parameter ‘regoff_t’ but no such parameter
+/usr/include/regex.h:433:34: error: declaration for parameter ‘regex_t’ but no such parameter
+/usr/include/regex.h:346:3: error: declaration for parameter ‘reg_errcode_t’ but no such parameter
+/usr/include/regex.h:45:27: error: declaration for parameter ‘reg_syntax_t’ but no such parameter
+/usr/include/regex.h:38:27: error: declaration for parameter ‘active_reg_t’ but no such parameter
+/usr/include/regex.h:37:18: error: declaration for parameter ‘s_reg_t’ but no such parameter
+/usr/include/dirent.h:319:18: error: declaration for parameter ‘getdirentries’ but no such parameter
+/usr/include/dirent.h:290:12: error: declaration for parameter ‘alphasort’ but no such parameter
+/usr/include/dirent.h:260:12: error: declaration for parameter ‘scandir’ but no such parameter
+/usr/include/dirent.h:128:28: error: parameter ‘DIR’ has incomplete type
+/usr/include/dirent.h:128:28: error: declaration for parameter ‘DIR’ but no such parameter
+/usr/include/stdio.h:878:14: error: declaration for parameter ‘ctermid’ but no such parameter
+/usr/include/bits/sys_errlist.h:28:30: error: declaration for parameter ‘sys_errlist’ but no such parameter
+/usr/include/bits/sys_errlist.h:27:12: error: declaration for parameter ‘sys_nerr’ but no such parameter
+/usr/include/stdio.h:839:13: error: declaration for parameter ‘perror’ but no such parameter
+/usr/include/stdio.h:732:15: error: declaration for parameter ‘fwrite_unlocked’ but no such parameter
+/usr/include/stdio.h:730:15: error: declaration for parameter ‘fread_unlocked’ but no such parameter
+/usr/include/stdio.h:708:15: error: declaration for parameter ‘fwrite’ but no such parameter
+/usr/include/stdio.h:702:15: error: declaration for parameter ‘fread’ but no such parameter
+/usr/include/stdio.h:695:12: error: declaration for parameter ‘ungetc’ but no such parameter
+/usr/include/stdio.h:688:12: error: declaration for parameter ‘puts’ but no such parameter
+/usr/include/stdio.h:682:12: error: declaration for parameter ‘fputs’ but no such parameter
+/usr/include/stdio.h:671:20: error: declaration for parameter ‘getline’ but no such parameter
+/usr/include/stdio.h:661:20: error: declaration for parameter ‘getdelim’ but no such parameter
+/usr/include/stdio.h:658:20: error: declaration for parameter ‘__getdelim’ but no such parameter
+/usr/include/stdio.h:632:14: error: declaration for parameter ‘gets’ but no such parameter
+/usr/include/stdio.h:624:14: error: declaration for parameter ‘fgets’ but no such parameter
+/usr/include/stdio.h:615:12: error: declaration for parameter ‘putw’ but no such parameter
+/usr/include/stdio.h:605:12: error: declaration for parameter ‘putchar_unlocked’ but no such parameter
+/usr/include/stdio.h:604:12: error: declaration for parameter ‘putc_unlocked’ but no such parameter
+/usr/include/stdio.h:596:12: error: declaration for parameter ‘fputc_unlocked’ but no such parameter
+/usr/include/stdio.h:582:12: error: declaration for parameter ‘putchar’ but no such parameter
+/usr/include/stdio.h:576:12: error: declaration for parameter ‘putc’ but no such parameter
+/usr/include/stdio.h:575:12: error: declaration for parameter ‘fputc’ but no such parameter
+/usr/include/stdio.h:553:12: error: declaration for parameter ‘getchar_unlocked’ but no such parameter
+/usr/include/stdio.h:540:12: error: declaration for parameter ‘getchar’ but no such parameter
+/usr/include/stdio.h:504:12: error: declaration for parameter ‘vsscanf’ but no such parameter
+/usr/include/stdio.h:501:12: error: declaration for parameter ‘vscanf’ but no such parameter
+/usr/include/stdio.h:485:12: error: declaration for parameter ‘vsscanf’ but no such parameter
+/usr/include/stdio.h:481:12: error: declaration for parameter ‘vscanf’ but no such parameter
+/usr/include/stdio.h:450:12: error: declaration for parameter ‘sscanf’ but no such parameter
+/usr/include/stdio.h:448:12: error: declaration for parameter ‘scanf’ but no such parameter
+/usr/include/stdio.h:435:12: error: declaration for parameter ‘sscanf’ but no such parameter
+/usr/include/stdio.h:433:12: error: declaration for parameter ‘scanf’ but no such parameter
+/usr/include/stdio.h:417:12: error: declaration for parameter ‘dprintf’ but no such parameter
+/usr/include/stdio.h:414:12: error: declaration for parameter ‘vdprintf’ but no such parameter
+/usr/include/stdio.h:387:12: error: declaration for parameter ‘vsnprintf’ but no such parameter
+/usr/include/stdio.h:383:12: error: declaration for parameter ‘snprintf’ but no such parameter
+/usr/include/stdio.h:376:12: error: declaration for parameter ‘vsprintf’ but no such parameter
+/usr/include/stdio.h:374:12: error: declaration for parameter ‘vprintf’ but no such parameter
+/usr/include/stdio.h:361:12: error: declaration for parameter ‘sprintf’ but no such parameter
+/usr/include/stdio.h:359:12: error: declaration for parameter ‘printf’ but no such parameter
+/usr/include/stdio.h:224:14: error: declaration for parameter ‘tempnam’ but no such parameter
+/usr/include/stdio.h:212:14: error: declaration for parameter ‘tmpnam_r’ but no such parameter
+/usr/include/stdio.h:206:14: error: declaration for parameter ‘tmpnam’ but no such parameter
+/usr/include/stdio.h:182:12: error: declaration for parameter ‘renameat’ but no such parameter
+/usr/include/stdio.h:177:12: error: declaration for parameter ‘rename’ but no such parameter
+/usr/include/stdio.h:175:12: error: declaration for parameter ‘remove’ but no such parameter
+/usr/include/stdio.h:167:25: error: declaration for parameter ‘stderr’ but no such parameter
+/usr/include/stdio.h:166:25: error: declaration for parameter ‘stdout’ but no such parameter
+/usr/include/stdio.h:165:25: error: declaration for parameter ‘stdin’ but no such parameter
+/usr/include/libio.h:461:12: error: declaration for parameter ‘_IO_putc’ but no such parameter
+/usr/include/libio.h:384:13: error: declaration for parameter ‘__io_close_fn’ but no such parameter
+/usr/include/libio.h:381:13: error: declaration for parameter ‘__io_seek_fn’ but no such parameter
+/usr/include/libio.h:372:19: error: declaration for parameter ‘__io_write_fn’ but no such parameter
+/usr/include/libio.h:364:19: error: declaration for parameter ‘__io_read_fn’ but no such parameter
+/usr/include/libio.h:348:29: error: parameter ‘_IO_2_1_stderr_’ has incomplete type
+/usr/include/libio.h:348:29: error: declaration for parameter ‘_IO_2_1_stderr_’ but no such parameter
+/usr/include/libio.h:347:29: error: parameter ‘_IO_2_1_stdout_’ has incomplete type
+/usr/include/libio.h:347:29: error: declaration for parameter ‘_IO_2_1_stdout_’ but no such parameter
+/usr/include/libio.h:346:29: error: parameter ‘_IO_2_1_stdin_’ has incomplete type
+/usr/include/libio.h:346:29: error: declaration for parameter ‘_IO_2_1_stdin_’ but no such parameter
+/usr/include/libio.h:341:25: error: declaration for parameter ‘_IO_FILE’ but no such parameter
+/usr/include/libio.h:180:14: error: parameter ‘_IO_lock_t’ has incomplete type
+/usr/include/libio.h:180:14: error: declaration for parameter ‘_IO_lock_t’ but no such parameter
+/usr/lib/i386-linux-gnu/gcc/i686-linux-gnu/4.5.2/include/stdarg.h:40:27: error: declaration for parameter ‘__gnuc_va_list’ but no such parameter
+/usr/include/_G_config.h:56:22: error: declaration for parameter ‘_G_uint32_t’ but no such parameter
+/usr/include/_G_config.h:55:22: error: declaration for parameter ‘_G_uint16_t’ but no such parameter
+/usr/include/_G_config.h:54:13: error: declaration for parameter ‘_G_int32_t’ but no such parameter
+/usr/include/_G_config.h:53:13: error: declaration for parameter ‘_G_int16_t’ but no such parameter
+/usr/include/_G_config.h:31:3: error: declaration for parameter ‘_G_fpos64_t’ but no such parameter
+/usr/include/_G_config.h:26:3: error: declaration for parameter ‘_G_fpos_t’ but no such parameter
+/usr/include/wchar.h:95:3: error: declaration for parameter ‘__mbstate_t’ but no such parameter
+/usr/include/stdio.h:65:25: error: declaration for parameter ‘__FILE’ but no such parameter
+/usr/include/stdio.h:49:25: error: declaration for parameter ‘FILE’ but no such parameter
+initialization.c:106:1: error: expected ‘{’ at end of input
+winhomefs0.3.c: In function ‘initialize_default_hidden_lists’:
+winhomefs0.3.c:63:1: error: parameter ‘hidden_list_root’ is initialized
+winhomefs0.3.c:64:1: error: parameter ‘hidden_list_home’ is initialized
+winhomefs0.3.c:65:1: error: parameter ‘hidden_list_user’ is initialized
+winhomefs0.3.c:74:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+winhomefs0.3.c:95:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+winhomefs0.3.c:110:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+winhomefs0.3.c:122:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+winhomefs0.3.c:148:31: error: storage class specified for parameter ‘hello_oper’
+winhomefs0.3.c:148:15: error: parameter ‘hello_oper’ is initialized
+winhomefs0.3.c:149:18: error: ‘hello_getattr’ undeclared (first use in this function)
+winhomefs0.3.c:149:18: note: each undeclared identifier is reported only once for each function it appears in
+winhomefs0.3.c:150:18: error: ‘hello_readdir’ undeclared (first use in this function)
+winhomefs0.3.c:151:15: error: ‘hello_open’ undeclared (first use in this function)
+winhomefs0.3.c:152:15: error: ‘hello_read’ undeclared (first use in this function)
+winhomefs0.3.c:158:1: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘{’ token
+winhomefs0.3.c:148:31: error: declaration for parameter ‘hello_oper’ but no such parameter
+winhomefs0.3.c:70:9: error: declaration for parameter ‘regex_user_mdocs_dir’ but no such parameter
+winhomefs0.3.c:69:9: error: declaration for parameter ‘regex_user_doc_subdir’ but no such parameter
+winhomefs0.3.c:68:9: error: declaration for parameter ‘regex_user_dot_folder’ but no such parameter
+winhomefs0.3.c:67:9: error: declaration for parameter ‘regex_user_home_dir’ but no such parameter
+winhomefs0.3.c:65:10: error: declaration for parameter ‘hidden_list_user’ but no such parameter
+winhomefs0.3.c:64:10: error: declaration for parameter ‘hidden_list_home’ but no such parameter
+winhomefs0.3.c:63:10: error: declaration for parameter ‘hidden_list_root’ but no such parameter
+winhomefs0.3.c:60:8: error: declaration for parameter ‘winversion’ but no such parameter
+winhomefs0.3.c:59:8: error: declaration for parameter ‘root_path’ but no such parameter
+winhomefs0.3.c:217:1: error: expected ‘{’ at end of input
