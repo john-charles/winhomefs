@@ -26,6 +26,7 @@
 #include "utilities.h"
 #include "resolve.h"
 #include "initialization.h"
+#include "readdir.h"
 
 /** Global variables **/
 
