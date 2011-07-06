@@ -35,7 +35,6 @@ if __name__ == '__main__':
   
   gcc = GCC(["gcc","-g", "-I./fs"])
   gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
-  gcc.addFile("readdir.c")
   gcc.addFile("argsparse.c")
   gcc.addFile("fs.c")
   gcc.addFile("initialization.c")
