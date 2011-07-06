@@ -41,7 +41,7 @@ char * bsearch_strings( char * term, char * list[], int count ){
 
 /** Public functions, by this I mean defined in the header file utilities.h **/
 
-char * substring( char * string, int start, int end ){
+char * substring( const char * string, int start, int end ){
   
   int i, j, new_size = end - start + 1;
   
@@ -58,6 +58,59 @@ char * substring( char * string, int start, int end ){
   return result;
   
 }
+
+int startswith( const char * string, const char * term ){
+  
+  int t_length = strlen( term );
+  
+  if( strlen( string ) >= t_length ){
+    
+    char * temp = substring( string, 0, t_length );
+    
+    int eq = strcmp( term, temp );
+    
+    free( temp );
+    
+    return eq == 0;
+    
+  }
+  
+  return 0;
+  
+}
+  
+  
+
+char * cat( char * str1, const char * str2, int do_free ){
+  
+  char * new = 0;
+  
+  if( str1 != 0 ){
+    
+    new = (char*)malloc( strlen(str1) + strlen(str2) + 1 );
+  
+    strcpy( new, str1 );
+    strcat( new, str2 );
+    
+    if( do_free ){
+      
+      free( str1 );
+    }
+  
+    
+  } else {
+    
+    new = (char*)malloc( strlen( str2 ) );
+    
+    strcpy( new, str2 );
+    
+  }
+    
+  return new;
+  
+}
+  
+  
 
 void list_t_sort( list_t * list ){
   

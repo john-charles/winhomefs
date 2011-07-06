@@ -12,7 +12,8 @@ typedef struct {
   
 } list_t;
 
-char * substring( char * string, int start, int end );
+int    startswith( const char * string, const char * term );
+char * substring( const char * string, int start, int end );
 
 list_t * list_t_new( );
 list_t * list_t_new_from_file( char * path );
@@ -26,6 +27,7 @@ void     list_t_print( list_t * list );
 void     list_t_free( list_t * list );
 
 char * add( const char * str1, const char * str2 );
+char * cat( char * str1, const char * str2, int do_free );
 char * join( list_t * path, char * delim );
 
 /** In prep for implementing a dictionary, this is for 

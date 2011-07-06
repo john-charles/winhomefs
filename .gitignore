@@ -2,4 +2,4 @@
 winhomefs
 mnt/
 out.txt
-
+.fuse_hidden*

@@ -21,37 +21,10 @@
 #include <fuse.h>
 #include <fuse_opt.h>
 
-static const char *hello_str = "Hello World!\n";
-static const char *hello_path = "/hello";
-
-/** options for fuse_opt.h */
-struct options {
-   char* foo;
-   char* bar;
-   int baz;
-   double quux;
-}options;
-
-/** macro to define options */
-#define HELLOFS_OPT_KEY(t, p, v) { t, offsetof(struct options, p), v }
-
-/** keys for FUSE_OPT_ options */
-enum
-{
-   KEY_VERSION,
-   KEY_HELP,
-};
-
-static struct fuse_opt hello_opts[] =
-{      
-  FUSE_OPT_KEY("-v",             KEY_VERSION),
-  FUSE_OPT_KEY("--version",      KEY_VERSION),
-  FUSE_OPT_KEY("-h",             KEY_HELP),
-  FUSE_OPT_KEY("--help",         KEY_HELP),
-  FUSE_OPT_END
-};
-
+#include "fs.c"
+#include "argsparse.h"
 #include "utilities.h"
+#include "resolve.h"
 #include "initialization.h"
 
 /** Global variables **/
@@ -61,38 +34,21 @@ char * winversion;
 char * winredirect;
 
   
-list_t * hidden_list_root = 0;
 list_t * hidden_list_home = 0;
 list_t * hidden_list_user = 0;
 
-regex_t regex_user_home_dir;
-regex_t regex_user_dot_folder;
-regex_t regex_user_doc_subdir;
-regex_t regex_user_mdocs_dir;
+redirect_t * my_documents;
+redirect_t * my_music;
+redirect_t * my_pictures;
+redirect_t * my_videos;
 
 
-static int hello_getattr(const char *path, struct stat *stbuf)
-{
-    int res = 0;
-
-    memset(stbuf, 0, sizeof(struct stat));
-    if(strcmp(path, "/") == 0) {
-        stbuf->st_mode = S_IFDIR || 0755;
-        stbuf->st_nlink = 2;
-    }
-    else if(strcmp(path, hello_path) == 0) {
-        stbuf->st_mode = S_IFREG || 0444;
-        stbuf->st_nlink = 1;
-        stbuf->st_size = strlen(hello_str);
-    }
-    else
-        res = -ENOENT;
-
-    return res;
-}
+   
+const char *hello_str = "Hello World!\n";
+const char *hello_path = "/hello";
 
 static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-                         off_t offset, struct fuse_file_info *fi)
+                          off_t offset, struct fuse_file_info *fi)
 {
     (void) offset;
     (void) fi;
@@ -130,13 +86,6 @@ static int hello_read(const char *path, char *buf, size_t size, off_t offset,
     if (offset < len) {
         if (offset + size > len)
             size = len - offset;
-        if(options.foo || options.bar || options.baz){
-         printf("fooooo bar !!\n");
-         printf("foo: \"%s\" bar: \"%s\" baz: \"%d\" quux: \"%f\"\n",
-            options.foo, options.bar, options.baz, options.quux);
-        }
-        else
-
         memcpy(buf, hello_str + offset, size);
     } else
         size = 0;
@@ -144,76 +93,50 @@ static int hello_read(const char *path, char *buf, size_t size, off_t offset,
     return size;
 }
 
-
-/** This tells FUSE how to do every operation */
-static struct fuse_operations hello_oper = {
-    .getattr   = hello_getattr,
+static struct fuse_operations fs_operations = {
+    .getattr   = fs_getattr,
     .readdir   = hello_readdir,
-    .open   = hello_open,
-    .read   = hello_read,
+    .open      = hello_open,
+    .read      = hello_read,
 };
-
-
+  
+  
 
 int main(int argc, char *argv[])
 {
   
-//   char * map_dir = 0;
-//   int i;
-//   for (i = 1; (i < argc) && (argv[i][0] == '-'); i++){
-//     if (argv[i][1] == 'o'){
-//       i++;
-//       // -o takes a parameter; need to
-//       // skip it too.  This doesn't
-//       // handle "squashed" parameters
-//     } else if ((argc - i) != 2){
-//       puts("Error parsing command arguments...");
-//       return 0;
-//     } else {
-//       
-//       
-//     
-//     map_dir = argv[i];
-//     argv[i] = argv[i + 1];
-//     argc--;
-//     
-//   }
-//   
-//   for(i = 0; i < argc; i++ ){
-//     puts( argv[i] );
-//   }
-  int success = 1;
-  
-  success = success && initialize_environment( "/mnt/Personal" );
+  int success = 1;  
+  char * prospective_root = preparse_opts( &argc, argv );
+   
+  success = success && initialize_environment( prospective_root );
+  success = success && initialize_redirect( );
   success = success && initialize_regex( );
   success = success && initialize_default_hidden_lists();
   
-  printf("success = %i\n", success );
+  if( success ){
+    
+    /*
   
-  /** Begin fuse initialization **/
-  /* but skip for now */
-  return 0;
+    puts( resolve("/My Hobbide") );
+    puts( resolve("/Dogs & Stuff") );
+    puts( resolve("/My Documents/My Videos/HQ DVD RIP") );
+    puts( resolve("/My Documents/My Music") );
+    puts( resolve("/My Documents/My Music/Collection") );
+    puts( resolve("/My Documents/My Pictures") );
+    puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );*/
+    /** Begin fuse initialization **/
+    /* but skip for now */
+    //return 0;
   
   
-  int ret;
-  struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+    struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+    parse( &args, argc, argv );
+    success = fuse_main(args.argc, args.argv, &fs_operations);
+    
+    /** free arguments */
+    fuse_opt_free_args(&args);
+    
+  }
 
-
-
-  /* clear structure that holds our options */
-  memset(&options, 0, sizeof(struct options));
-
-  if (fuse_opt_parse(&args, &options, hello_opts, NULL) == -1)
-    /** error parsing options */
-    return -1;
-
-
-  ret = fuse_main(args.argc, args.argv, &hello_oper);
-
-  if (ret) printf("\n");
-
-  /** free arguments */
-  fuse_opt_free_args(&args);
-
-   return ret;
+  return success;
 }
