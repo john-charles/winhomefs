@@ -33,7 +33,7 @@ class GCC:
     
 if __name__ == '__main__':
   
-  gcc = GCC(["gcc","-g", "-I./fs"])
+  gcc = GCC(["gcc","-g"])
   gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
   gcc.addFile("argsparse.c")
   gcc.addFile("fs.c")

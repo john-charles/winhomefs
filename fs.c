@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include <regex.h>
 #include <fuse.h>
+#include <dirent.h>
 #include <fuse_opt.h>
 #include <sys/stat.h>
 
@@ -23,19 +24,11 @@ static int fs_getattr(const char *path, struct stat *stbuf)
     int res = 0;
     memset(stbuf, 0, sizeof(struct stat));
     
+    char * real_path = resolve( path );
     
+    stat( real_path, stbuf );
     
-    if(strcmp(path, "/") == 0) {
-        stbuf->st_mode = S_IFDIR | 0755;
-        stbuf->st_nlink = 2;
-    }
-    else if(strcmp(path, hello_path) == 0) {
-        stbuf->st_mode = S_IFREG | 0444;
-        stbuf->st_nlink = 1;
-        stbuf->st_size = strlen(hello_str);
-    }
-    else
-        res = -ENOENT;
+    free( real_path );
 
     return res;
 }
@@ -45,13 +38,22 @@ static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 {
     (void) offset;
     (void) fi;
+    
+    char * real_path = resolve( path );
+    
+    struct dirent * entry;
+    
+    DIR * dp = opendir( real_path );
+    
+    while( entry = readdir( dp ) ){
+      filler( buf, entry->d_name, NULL, 0 );
+    }
 
-    if(strcmp(path, "/") != 0)
-        return -ENOENT;
-
-    filler(buf, ".", NULL, 0);
-    filler(buf, "..", NULL, 0);
-    filler(buf, hello_path + 1, NULL, 0);
+//     if(strcmp(path, "/") != 0) return -ENOENT;
+// 
+//     filler(buf, ".", NULL, 0);
+//     filler(buf, "..", NULL, 0);
+//     filler(buf, hello_path + 1, NULL, 0);
 
     return 0;
 }
