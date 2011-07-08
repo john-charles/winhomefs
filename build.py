@@ -36,6 +36,7 @@ if __name__ == '__main__':
   gcc = GCC(["gcc","-g"])
   gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
   gcc.addFile("argsparse.c")
+  gcc.addFile("hidden.c")
   gcc.addFile("fs.c")
   gcc.addFile("initialization.c")
   gcc.addFile("resolve.c")

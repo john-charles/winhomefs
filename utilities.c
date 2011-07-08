@@ -356,8 +356,18 @@ char * join( list_t * path, char * delim ){
   
   
     
-    
+FILE * log_f( const char * title, const char * message ){
+  char * base = "/tmp/";
+  char * path = (char*)malloc( strlen( base ) + strlen( title ) );
   
+  sprintf( path, "%s%s", base, title );
+  
+  FILE * f = fopen(path,"ab");
+  
+  
+  return f;
+   
+}
   
   
   

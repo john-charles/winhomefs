@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   
   if( success ){
     
-    /*
+    
   
     puts( resolve("/My Hobbide") );
     puts( resolve("/Dogs & Stuff") );
@@ -108,11 +108,14 @@ int main(int argc, char *argv[])
     puts( resolve("/My Documents/My Music") );
     puts( resolve("/My Documents/My Music/Collection") );
     puts( resolve("/My Documents/My Pictures") );
-    puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );*/
+    puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );
+    
     /** Begin fuse initialization **/
     /* but skip for now */
     //return 0;
-  
+    
+    log_f("test.log.txt","This is a log entry!");
+    
   
     struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
     parse( &args, argc, argv );

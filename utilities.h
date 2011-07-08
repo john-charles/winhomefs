@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include <stdlib.h>
 
 #ifndef UTILITIES_H
@@ -47,5 +47,8 @@ typedef struct {
   int length;
   
 } cache_dict_t;
+
+
+FILE * log_f( const char * title, const char * message );
 
 #endif

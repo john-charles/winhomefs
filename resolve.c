@@ -38,6 +38,11 @@ char * resolve_vista( const char * path ){
     temp = cat( root_path, my_pictures->dst, 0 );
     return cat( temp, substring( path, my_pictures->len, strlen( path ) ), 1 );
     
+  } else if( strncmp( path, my_documents->src, my_documents->len ) == 0 ){
+    
+    temp = cat( root_path, my_documents->dst, 0 );
+    return cat( temp, substring( path, my_documents->len, strlen( path ) ), 1 );
+    
   } else {
     
     return cat( root_path, path, 0 );
