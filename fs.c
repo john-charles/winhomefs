@@ -1,4 +1,5 @@
 #include "fs.h"
+#include "hidden.h"
 #include "resolve.h"
 #include "utilities.h"
 
@@ -15,6 +16,8 @@
 
 extern list_t * hidden_list_home;
 extern list_t * hidden_list_user;
+
+extern char * winredirect;
 
 extern const char * hello_str;
 extern const char * hello_path;
@@ -61,7 +64,7 @@ static int fs_getattr(const char *path, struct stat *stbuf)
     return res;
 }
 
-static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+static int fs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                           off_t offset, struct fuse_file_info *fi)
 {
     (void) offset;
@@ -69,21 +72,88 @@ static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     
     char * real_path = resolve( path );
     
+    list_t * hidden = get_hidden_list( real_path );
+    
     struct dirent * entry;
     
     DIR * dp = opendir( real_path );
     
-    while( entry = readdir( dp ) ){
-      filler( buf, entry->d_name, NULL, 0 );
+    if( strcmp( path, "/" ) == 0 ){
+      
+      while( entry = readdir( dp ) ){
+        
+        if( !list_t_contains( hidden, entry->d_name ) && entry->d_name[0] != '.' ){
+          filler( buf, entry->d_name, NULL, 0 );
+        }
+      }
+    
+      closedir( dp );     
+      dp = opendir( winredirect );
+      
+      while( entry = readdir( dp ) ){
+        
+        filler( buf, entry->d_name, NULL, 0 );
+                
+      }
+                 
+    } else {
+      
+      while( entry = readdir( dp ) ){
+        
+        if( !list_t_contains( hidden, entry->d_name ) ){
+          filler( buf, entry->d_name, NULL, 0 );
+        }
+      }
+      
     }
+    
+    closedir( dp );
 
-//     if(strcmp(path, "/") != 0) return -ENOENT;
-// 
-//     filler(buf, ".", NULL, 0);
-//     filler(buf, "..", NULL, 0);
-//     filler(buf, hello_path + 1, NULL, 0);
-
+    list_t_free( hidden );
+    
     return 0;
+}
+
+
+static int fs_open(const char *path, struct fuse_file_info *fi)
+{
+  FILE * log_file = log_f("fs_open","");
+  
+  char * real_path = resolve( path );
+  fi->fh = open( real_path, fi->flags );
+  fprintf( log_file, "real path is %s\n", real_path );
+  fprintf( log_file, "fi->fh == %i\n", (int) fi->fh );
+  close( log_file );
+  if( fi->fh == -1 ){    
+    return -errno;    
+  }
+      
+  return 0;
+}
+
+static int hello_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
+{
+  FILE * log_file = log_f("hello_read","");
+  fprintf( log_file, "fi->fh == %i\n",(int) fi->fh );
+  int return_code = 0;
+  
+  if( fi->fh == -1 ){
+    
+    return_code = -EBADF;
+    fprintf( log_file, "file_handle == -1\n");
+        
+  } else {
+    
+    memset( buf, 0, size );
+    
+    fprintf( log_file, "size is %i offset is %i\n", (int) size, (int) offset );
+    return_code =  pread( fi->fh, buf, size, offset );
+    fprintf( log_file, "buff contains %s\n", buf );
+    fprintf( log_file, "called pread, return code is %i\n", return_code );
+  }
+  
+  return return_code;
+    
 }
 
 

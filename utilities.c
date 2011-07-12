@@ -302,6 +302,20 @@ void list_t_print( list_t * list ){
   
 }
 
+void list_t_printf( FILE * file, list_t * list ){
+  
+  int i;
+  fprintf(file,"[ ");
+  for( i = 0; i < list->length; i++ ){
+    fprintf(file,"\"%s\"",list->data[i]);
+    if( i+1 < list->length ){
+      fprintf(file,", ");
+    }
+  }
+  fprintf(file," ]");
+  
+}
+
 void list_t_free( list_t * list ){
   
   int i;

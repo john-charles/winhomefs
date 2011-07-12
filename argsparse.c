@@ -42,6 +42,9 @@ char * preparse_opts( int * argc, char * argv[] ){
       i++;
     
       
+    } else if( argv[i][0] == '-' ){
+      continue;
+      
     } else if( root == 0 ){
       
       root = (char*)malloc( strlen( argv[i] ) );

@@ -22,6 +22,7 @@
 #include <fuse_opt.h>
 
 #include "fs.c"
+#include "hidden.h"
 #include "argsparse.h"
 #include "utilities.h"
 #include "resolve.h"
@@ -33,6 +34,7 @@
 char * root_path;
 char * winversion;
 char * winredirect;
+
 
   
 list_t * hidden_list_home = 0;
@@ -48,40 +50,40 @@ redirect_t * my_videos;
 const char *hello_str = "Hello World!\n";
 const char *hello_path = "/hello";
 
-static int hello_open(const char *path, struct fuse_file_info *fi)
-{
-    if(strcmp(path, hello_path) != 0)
-        return -ENOENT;
+// static int hello_open(const char *path, struct fuse_file_info *fi)
+// {
+//     if(strcmp(path, hello_path) != 0)
+//         return -ENOENT;
+// 
+//     if((fi->flags & 3) != O_RDONLY)
+//         return -EACCES;
+// 
+//     return 0;
+// }
 
-    if((fi->flags & 3) != O_RDONLY)
-        return -EACCES;
-
-    return 0;
-}
-
-static int hello_read(const char *path, char *buf, size_t size, off_t offset,
-                      struct fuse_file_info *fi)
-{
-    size_t len;
-    (void) fi;
-    if(strcmp(path, hello_path) != 0)
-        return -ENOENT;
-
-    len = strlen(hello_str);
-    if (offset < len) {
-        if (offset + size > len)
-            size = len - offset;
-        memcpy(buf, hello_str + offset, size);
-    } else
-        size = 0;
-
-    return size;
-}
+// static int hello_read(const char *path, char *buf, size_t size, off_t offset,
+//                       struct fuse_file_info *fi)
+// {
+//     size_t len;
+//     (void) fi;
+//     if(strcmp(path, hello_path) != 0)
+//         return -ENOENT;
+// 
+//     len = strlen(hello_str);
+//     if (offset < len) {
+//         if (offset + size > len)
+//             size = len - offset;
+//         memcpy(buf, hello_str + offset, size);
+//     } else
+//         size = 0;
+// 
+//     return size;
+// }
 
 static struct fuse_operations fs_operations = {
     .getattr   = fs_getattr,
-    .readdir   = hello_readdir,
-    .open      = hello_open,
+    .readdir   = fs_readdir,
+    .open      = fs_open,
     .read      = hello_read,
 };
   
@@ -101,7 +103,7 @@ int main(int argc, char *argv[])
   if( success ){
     
     
-  
+    puts( resolve("/.hidden") );
     puts( resolve("/My Hobbide") );
     puts( resolve("/Dogs & Stuff") );
     puts( resolve("/My Documents/My Videos/HQ DVD RIP") );
@@ -110,9 +112,28 @@ int main(int argc, char *argv[])
     puts( resolve("/My Documents/My Pictures") );
     puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );
     
+//     char * buff = (char*)malloc(4096);
+//     memset( buff, 0, 4096 );
+//     char * p = resolve("/hello");
+//     printf("p == %s\n", p );
+//     FILE * hello = fopen(p,"rb");
+//     printf("errno == %i\n", errno );
+//     int read = pread( hello, buff, 4096, 0 );
+//     printf("read from errno == %i\n", errno );
+//     printf("read from hello %i bytes\n", read );
+//     printf("read from hello %s\n", buff );
+    
+//     list_t * hidden = get_hidden_list( resolve("/") );
+//     list_t_print( hidden );
+//     
+//     puts("");
+//     printf("AppData list_result == %i\n", list_t_contains( hidden, "AppData" ) );
+//     
+//     list_t_free( hidden );
+      
     /** Begin fuse initialization **/
     /* but skip for now */
-    //return 0;
+//     return 0;
     
     log_f("test.log.txt","This is a log entry!");
     

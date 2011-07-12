@@ -1,6 +1,8 @@
 #ifndef HIDDEN_H
 #define HIDDEN_H
 
-static int is_hidden( char * path );
+#include "utilities.h"
+
+list_t * get_hidden_list( const char * path );
 
 #endif

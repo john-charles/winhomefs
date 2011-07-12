@@ -19,7 +19,11 @@ char * resolve_vista( const char * path ){
   
   char * temp = 0;
   
-  if( strncmp( path, "/.", 2 ) == 0 ){
+  if( strncmp( path, "/.hidden", 8 ) == 0 ){
+    
+    return cat( root_path, path, 0 );
+    
+  } else if( strncmp( path, "/.", 2 ) == 0 ){
     
     return cat( winredirect, path, 0 );
     

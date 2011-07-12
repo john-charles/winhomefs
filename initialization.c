@@ -200,19 +200,22 @@ int initialize_default_hidden_lists( ){
   list_t_append( hidden_list_home, "AppData" );
   list_t_append( hidden_list_home, "Application Data" );
   list_t_append( hidden_list_home, "Cookies" );
+  list_t_append( hidden_list_home, "Links"  );
   list_t_append( hidden_list_home, "Local Settings" );
   list_t_append( hidden_list_home, "NetHood");
-  list_t_append( hidden_list_home, "ntuser.*");
-  list_t_append( hidden_list_home, "NTUSER.*");
+  list_t_append( hidden_list_home, "ntuser.ini");
+  list_t_append( hidden_list_home, "NTUSER.DAT");
   list_t_append( hidden_list_home, "PrintHood" );
   list_t_append( hidden_list_home, "Recent" );
   list_t_append( hidden_list_home, "SendTo" );
   list_t_append( hidden_list_home, "Start Menu" );
   list_t_append( hidden_list_home, "Templets" );
+  list_t_sort( hidden_list_home );
   
   list_t_append( hidden_list_user, "desktop.ini" );
   list_t_append( hidden_list_user, "Desktop.ini" );
   list_t_append( hidden_list_user, "Thumbs.db"   );
+  list_t_sort( hidden_list_user );
   
   return 1;
   
