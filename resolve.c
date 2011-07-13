@@ -18,43 +18,45 @@ extern redirect_t * my_videos;
 char * resolve_vista( const char * path ){
   
   char * temp = 0;
+  char * result = "";
   
   if( strncmp( path, "/.hidden", 8 ) == 0 ){
     
-    return cat( root_path, path, 0 );
+    result = cat( root_path, path, 0 );
     
   } else if( strncmp( path, "/.", 2 ) == 0 ){
     
-    return cat( winredirect, path, 0 );
+    result = cat( winredirect, path, 0 );
     
   } else if( strncmp( path, my_videos->src, my_videos->len ) == 0 ){
     
     temp = cat( root_path, my_videos->dst, 0);
-    return cat( temp, substring( path, my_videos->len, strlen( path ) ), 1 );
+    result = cat( temp, substring( path, my_videos->len, strlen( path ) ), 1 );
     
   } else if( strncmp( path, my_music->src, my_music->len ) == 0 ){
     
     temp = cat( root_path, my_music->dst, 0 );
-    return cat( temp, substring( path, my_music->len, strlen( path ) ), 1 );
+    result = cat( temp, substring( path, my_music->len, strlen( path ) ), 1 );
     
   } else if( strncmp( path, my_pictures->src, my_pictures->len ) == 0 ){
     
     temp = cat( root_path, my_pictures->dst, 0 );
-    return cat( temp, substring( path, my_pictures->len, strlen( path ) ), 1 );
+    result = cat( temp, substring( path, my_pictures->len, strlen( path ) ), 1 );
     
   } else if( strncmp( path, my_documents->src, my_documents->len ) == 0 ){
     
     temp = cat( root_path, my_documents->dst, 0 );
-    return cat( temp, substring( path, my_documents->len, strlen( path ) ), 1 );
+    result = cat( temp, substring( path, my_documents->len, strlen( path ) ), 1 );
     
   } else {
     
-    return cat( root_path, path, 0 );
+    result = cat( root_path, path, 0 );
     
   }
   
+  printf("resolve.c: resolve(%s) --> %s\n", path, result );
   
-  return "";
+  return result;
   
 }
 

@@ -80,11 +80,55 @@ const char *hello_path = "/hello";
 //     return size;
 // }
 
+// .getattr        = xmp_getattr,
+// .access         = xmp_access,
+// .readlink       = xmp_readlink,
+// .readdir        = xmp_readdir,
+// .mknod          = xmp_mknod,
+// .mkdir          = xmp_mkdir,
+// .symlink        = xmp_symlink,
+// .unlink         = xmp_unlink,
+// .rmdir          = xmp_rmdir,
+// .rename         = xmp_rename,
+// .link           = xmp_link,
+// .chmod          = xmp_chmod,
+// .chown          = xmp_chown,
+// .truncate       = xmp_truncate,
+// .utimens        = xmp_utimens,
+// .open           = xmp_open,
+// .read           = xmp_read,
+// .write          = xmp_write,
+// .statfs         = xmp_statfs,
+// .release        = xmp_release,
+// .fsync          = xmp_fsync,
+// #ifdef HAVE_SETXATTR
+// .setxattr       = xmp_setxattr,
+// .getxattr       = xmp_getxattr,
+// .listxattr      = xmp_listxattr,
+// .removexattr    = xmp_removexattr,
+// #endif
+
+
 static struct fuse_operations fs_operations = {
+    .access    = fs_access,
+    .chmod     = fs_chmod,
+    .chown     = fs_chown,
+    .fsync     = fs_fsync,    
     .getattr   = fs_getattr,
-    .readdir   = fs_readdir,
+    //.getxattr... not implemented...
+    .link      = fs_link,
+    .mkdir     = fs_mkdir,
+    .mknod     = fs_mknod,
     .open      = fs_open,
-    .read      = hello_read,
+    .read      = fs_read,
+    //.listxattr=
+    .readdir   = fs_readdir,
+    .readlink  = fs_readlink,
+    .release   = fs_release,
+    .rename    = fs_rename,
+    .rmdir     = fs_rmdir,
+    
+    .write     = fs_write,
 };
   
   
@@ -103,15 +147,15 @@ int main(int argc, char *argv[])
   if( success ){
     
     
-    puts( resolve("/.hidden") );
-    puts( resolve("/My Hobbide") );
-    puts( resolve("/Dogs & Stuff") );
-    puts( resolve("/My Documents/My Videos/HQ DVD RIP") );
-    puts( resolve("/My Documents/My Music") );
-    puts( resolve("/My Documents/My Music/Collection") );
-    puts( resolve("/My Documents/My Pictures") );
-    puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );
-    
+//     puts( resolve("/.hidden") );
+//     puts( resolve("/My Hobbide") );
+//     puts( resolve("/Dogs & Stuff") );
+//     puts( resolve("/My Documents/My Videos/HQ DVD RIP") );
+//     puts( resolve("/My Documents/My Music") );
+//     puts( resolve("/My Documents/My Music/Collection") );
+//     puts( resolve("/My Documents/My Pictures") );
+//     puts( resolve("/My Documents/My Pictures/2011/March/ProfilePictures/001.jpg") );
+//     
 //     char * buff = (char*)malloc(4096);
 //     memset( buff, 0, 4096 );
 //     char * p = resolve("/hello");
