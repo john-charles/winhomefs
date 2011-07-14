@@ -128,6 +128,8 @@ static struct fuse_operations fs_operations = {
     .rename    = fs_rename,
     .rmdir     = fs_rmdir,
     
+    .unlink    = fs_unlink,
+    
     .write     = fs_write,
 };
   

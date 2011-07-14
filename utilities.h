@@ -25,6 +25,7 @@ void     list_t_extend_unique( list_t * list, list_t * second );
 int      list_t_contains( list_t * list, char * string );
 void     list_t_print( list_t * list );
 void     list_t_printf( FILE * file, list_t * list );
+void     list_t_sort( list_t * list );
 void     list_t_free( list_t * list );
 
 

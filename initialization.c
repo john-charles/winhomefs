@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <regex.h>
+#include <sys/stat.h>
 
 extern char * root_path;
 extern char * winredirect;

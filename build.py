@@ -33,13 +33,14 @@ class GCC:
     
 if __name__ == '__main__':
   
-  gcc = GCC(["gcc","-g"])
+  gcc = GCC(["gcc","-g","-Wall"])
   gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
+  gcc.addFile("-lulockmgr")
   gcc.addFile("argsparse.c")
   gcc.addFile("hidden.c")
-  gcc.addFile("fs.c")
+  #gcc.addFile("fs.c")
   gcc.addFile("initialization.c")
   gcc.addFile("resolve.c")
   gcc.addFile("utilities.c")
-  gcc.addFile("winhomefs0.3.c")
+  gcc.addFile("winhomefs0.4.c")
   gcc.compile("winhomefs")

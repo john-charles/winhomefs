@@ -145,7 +145,7 @@ list_t * list_t_new_from_file( char * path ){
   
   int    read = 0;
   int    leng = 0;
-  int    size = 20;
+  size_t size = 20;
   char * buff = (char*)malloc( size );
   char * temp = 0;
   
@@ -186,7 +186,7 @@ list_t * list_t_new_listdir( char * path ){
   
   if( directory ){
     
-    while( entry = readdir( directory ) ){
+    while(( entry = readdir( directory ) )){
       
       list_t_append( contents, entry->d_name );
             

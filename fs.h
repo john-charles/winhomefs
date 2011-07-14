@@ -26,6 +26,8 @@ static int fs_release(const char *path, struct fuse_file_info *fi);
 static int fs_rename(const char *from, const char *to);
 static int fs_rmdir(const char *path);
 
+static int fs_unlink(const char *path);
+
 static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                           off_t offset, struct fuse_file_info *fi);
 

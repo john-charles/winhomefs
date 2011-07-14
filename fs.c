@@ -324,6 +324,21 @@ static int fs_rmdir(const char *path){
 //     return 0;
 }
 
+static int fs_unlink(const char *path)
+{
+  char * real_path = resolve( path );
+  int res;
+
+  res = unlink(real_path);
+  
+  free( real_path );
+  
+  if (res == -1)
+    return -errno;
+
+  return 0;
+}
+
 
 static int fs_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi){
   

@@ -33,7 +33,7 @@ list_t * get_hidden_list( const char * path ){
   
   if( hidden_f ){
     
-    int    size = 100;
+    size_t size = 100;
     char * buff = (char*)malloc(100);
     int    read = getline( &buff, &size, hidden_f );
     
