@@ -54,6 +54,14 @@ char * resolve_vista( const char * path ){
     
   }
   
+  int i;
+  
+  for( i = 0; i < strlen( result ); i++ ){
+    
+    if( result[i] == ':' ) result[i] = '_';
+      
+  }
+  
   printf("resolve.c: resolve(%s) --> %s\n", path, result );
   
   return result;

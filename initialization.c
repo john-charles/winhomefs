@@ -198,6 +198,8 @@ int initialize_default_hidden_lists( ){
   hidden_list_home = list_t_new();
   hidden_list_user = list_t_new();
     
+  list_t_append( hidden_list_home, "." );
+  list_t_append( hidden_list_home, ".." );
   list_t_append( hidden_list_home, "AppData" );
   list_t_append( hidden_list_home, "Application Data" );
   list_t_append( hidden_list_home, "Cookies" );

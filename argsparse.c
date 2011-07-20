@@ -1,67 +1,40 @@
 #include <fuse_opt.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 
-/** options for fuse_opt.h */
-struct options {
-   char* foo;
-   char* bar;
-   int baz;
-   double quux;
-}options;
+#include "utilities.h"
 
-/** macro to define options */
-#define HELLOFS_OPT_KEY(t, p, v) { t, offsetof(struct options, p), v }
 
-/** keys for FUSE_OPT_ options */
-enum
-{
-   KEY_VERSION,
-   KEY_HELP,
-};
-
-static struct fuse_opt hello_opts[] =
-{      
-  FUSE_OPT_KEY("-v",             KEY_VERSION),
-  FUSE_OPT_KEY("--version",      KEY_VERSION),
-  FUSE_OPT_KEY("-h",             KEY_HELP),
-  FUSE_OPT_KEY("--help",         KEY_HELP),
-  FUSE_OPT_END
-};
-
-char * preparse_opts( int * argc, char * argv[] ){
+char * preparse_opts( int * argc, char * argv[], list_t * fuse_args ){
   
   char * root = 0;
   
   int i;
   
+  list_t_append( fuse_args, argv[0] );
+  
   for( i = 1; i < *argc; i++ ){
     
     if( strcmp( argv[i], "-o" ) == 0 ){
-      /* We can skip the next command */
+      
+      list_t_append( fuse_args, "-o" );
+      list_t_append( fuse_args, argv[i+1] );
+       
       i++;
-    
+      /* skip this option */
       
     } else if( argv[i][0] == '-' ){
-      continue;
-      
+      list_t_append( fuse_args, argv[i] );
     } else if( root == 0 ){
-      
-      root = (char*)malloc( strlen( argv[i] ) );
-      strcpy( root, argv[i] );
-      i--;
-      
+      root = cat( argv[i], "", 0 );
     } else {
-      
-      if( ( i + 1 ) < *argc ){
-        
-        argv[i] = argv[i+1];
-        
-      }
+      list_t_append( fuse_args, argv[i] );
     }
   }
-  
-  *argc = *argc - 1;
+   
+  list_t_print( fuse_args );
+    
   return root;
   
 }
@@ -94,16 +67,11 @@ char * preparse_opts( int * argc, char * argv[] ){
 //   }
 
 
-int parse( struct fuse_args * args, int argc, char * argv[] ){
+struct fuse_args * parse( int argc, char * argv[] ){
   
   
-  /* clear structure that holds our options */
-  memset(&options, 0, sizeof(struct options));
   
-  if (fuse_opt_parse(args, &options, hello_opts, NULL) == -1)
-    /** error parsing options */
-    return 0;
   
-  return 1;
+  return 0;
   
 }

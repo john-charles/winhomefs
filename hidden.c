@@ -15,12 +15,6 @@ list_t * get_hidden_list( const char * path ){
   FILE   * hidden_f = fopen( hidden_p, "rb" );  
   list_t * hidden_l = list_t_new();
   
-  FILE * logf = log_f("hiddendbg.txt","");
-  
-  fprintf(logf,"path is %s\n", path );
-  fprintf(logf,"path == root_path == %i\n", strcmp( path, root_path ));
-  fclose( logf );
-  
   if( strcmp( path, root_path ) == 0 ){
     
     list_t_extend( hidden_l, hidden_list_home );

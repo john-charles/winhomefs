@@ -26,11 +26,13 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <errno.h>
+#include <sys/types.h>
 #include <sys/time.h>
 #ifdef HAVE_SETXATTR
 #include <sys/xattr.h>
 #endif
 
+#include "hidden.h"
 #include "resolve.h"
 #include "utilities.h"
 #include "argsparse.h"
@@ -105,83 +107,71 @@ static int xmp_readlink(const char *path, char *buf, size_t size){
   
 }
 
-struct xmp_dirp {
-	DIR *dp;
-	struct dirent *entry;
-	off_t offset;
-};
-
-static int xmp_opendir(const char *path, struct fuse_file_info *fi)
-{
-	int res;
-	struct xmp_dirp *d = malloc(sizeof(struct xmp_dirp));
-	if (d == NULL)
-		return -ENOMEM;
-  char * real_path = resolve( path );
-	d->dp = opendir(real_path);
-    free( real_path );
-	if (d->dp == NULL) {
-		res = -errno;
-		free(d);
-		return res;
-	}
-	d->offset = 0;
-	d->entry = NULL;
-
-	fi->fh = (unsigned long) d;
-	return 0;
-}
-
-static inline struct xmp_dirp *get_dirp(struct fuse_file_info *fi)
-{
-	return (struct xmp_dirp *) (uintptr_t) fi->fh;
-}
+static int fs_readdir_root( const char * real_path, void * buf, fuse_fill_dir_t filler, off_t offset ){
+  
+  list_t * dotd = list_t_new_listdir( winredirect );
+  list_t * root = list_t_new_listdir( real_path );
+  
+  list_t_extend( root, dotd );
+  list_t_free( dotd );
+  
+  list_t * hidden = get_hidden_list( real_path );
+  
+  if( offset < root->length ){
+    
+    int i;
+  
+    for( i = offset; i < root->length; i++ ){
+    
+      if( !list_t_contains( hidden, root->data[i] ) ){
+        filler( buf, root->data[i], 0, i +1 );
+      }
+    }
+  }
+  
+  list_t_free( root );
+  list_t_free( hidden );
+  return 0;
+  
+} 
+  
+  
 
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
-
-  struct xmp_dirp *d = get_dirp(fi);
-
-  (void) path;
-  if (offset != d->offset) {
-    seekdir(d->dp, offset);
-    d->entry = NULL;
-    d->offset = offset;
-  }
   
-  while (1) {
-    struct stat st;
-    off_t nextoff;
+  char * real_path = resolve( path );
+  int return_val = 0;
+  
+  if( strcmp( path, "/" ) == 0 ){
     
-    if (!d->entry) {
-      d->entry = readdir(d->dp);
-      if (!d->entry)
-        break;
-      }
-      memset(&st, 0, sizeof(st));
-      st.st_ino = d->entry->d_ino;
-      st.st_mode = d->entry->d_type << 12;
-      nextoff = telldir(d->dp);
-      if (filler(buf, d->entry->d_name, &st, nextoff))
-        break;
-      d->entry = NULL;
-      d->offset = nextoff;
+    return_val = fs_readdir_root( real_path, buf, filler, offset );
+       
+    
+  } else {
+    
+    list_t * entries = list_t_new_listdir( real_path );
+    list_t * hidden  = get_hidden_list( real_path );
+    
+    int i;
+    
+    for( i = offset; i < entries->length; i++ ){
       
+      if( !list_t_contains( hidden, entries->data[i] ) ){
+        filler( buf, entries->data[i], 0, i+1 );
+      }
+    }
+    
+    list_t_free( hidden );
+    list_t_free( entries );
     
   }
   
+  
+  free( real_path );
   return 0;
-
   
 }
 
-static int xmp_releasedir(const char *path, struct fuse_file_info *fi)
-{
-	struct xmp_dirp *d = get_dirp(fi);
-	(void) path;
-	closedir(d->dp);
-	free(d);
-	return 0;
-}
 
 static int xmp_mknod(const char * ipath, mode_t mode, dev_t rdev)
 {
@@ -200,107 +190,159 @@ static int xmp_mknod(const char * ipath, mode_t mode, dev_t rdev)
 	return 0;
 }
 
-static int xmp_mkdir(const char *path, mode_t mode)
-{
-	int res;
-
-	res = mkdir(path, mode);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_mkdir(const char *path, mode_t mode){
+  
+  int res;
+  char * real_path = resolve( path );
+  
+  res = mkdir( real_path, mode );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_unlink(const char *path)
-{
-	int res;
-
-	res = unlink(path);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_unlink(const char *path){
+  
+  if( strcmp( path, "/AppData" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Application Data") == 0 ) return -EPERM;
+  if( strcmp( path, "/Desktop" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Downloads" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Documents" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Music" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Pictures" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Projects" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Videos" ) == 0 ) return -EPERM;
+  
+  int res;
+  char * real_path = resolve( path );
+  
+  res = unlink(real_path);
+  
+  free( real_path );
+  
+  if (res == -1) return -errno;
+  return 0;
+  
 }
 
-static int xmp_rmdir(const char *path)
-{
-	int res;
-
-	res = rmdir(path);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_rmdir(const char *path){
+  
+  if( strcmp( path, "/AppData" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Application Data") == 0 ) return -EPERM;
+  if( strcmp( path, "/Desktop" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Downloads" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Documents" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Music" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Pictures" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Projects" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Videos" ) == 0 ) return -EPERM;
+  
+  int res;
+  char * real_path = resolve( path );
+  
+  res = rmdir( real_path );
+  
+  free( real_path );
+  
+  if (res == -1) return -errno;
+  return 0;
+  
 }
 
-static int xmp_symlink(const char *from, const char *to)
-{
-	int res;
+static int xmp_symlink(const char *from, const char *to){
+  
+  char * real_from = resolve( from );
+  int res;
+  /* NOTE: I have not yet decided how I want to my symlinks work... */
+  res = symlink( real_from, to );
+  
+  free( real_from );
+  
+  if (res == -1)
+    return -errno;
 
-	res = symlink(from, to);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+  return 0;
 }
 
-static int xmp_rename(const char *from, const char *to)
-{
-	int res;
-
-	res = rename(from, to);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_rename(const char *from, const char *to){
+  
+  char * real_from = resolve( from );
+  char * real_to   = resolve( to );
+  int res;
+  
+  res = rename( real_from, real_to );
+  
+  free( real_from );
+  free( real_to );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_link(const char *from, const char *to)
-{
-	int res;
-
-	res = link(from, to);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_link(const char *from, const char *to){
+  
+  char * real_from = resolve( from );
+  char * real_to   = resolve( to );
+  int res;
+  
+  res = link( real_from, real_to );
+  
+  free( real_from );
+  free( real_to );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_chmod(const char *path, mode_t mode)
-{
-	int res;
-
-	res = chmod(path, mode);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_chmod(const char *path, mode_t mode){
+  
+  char * real_path = resolve( path );
+  int res;
+  
+  res = chmod( real_path, mode );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_chown(const char *path, uid_t uid, gid_t gid)
-{
-	int res;
-
-	res = lchown(path, uid, gid);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_chown(const char *path, uid_t uid, gid_t gid){
+  
+  char * real_path = resolve( path );
+  int res;
+  
+  res = lchown(path, uid, gid);
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_truncate(const char *path, off_t size)
-{
-	int res;
-
-	res = truncate(path, size);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_truncate(const char *path, off_t size){
+  
+  char * real_path = resolve( path );
+  int res;
+  
+  res = truncate( real_path, size );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
+  
 }
 
-static int xmp_ftruncate(const char *path, off_t size,
-			 struct fuse_file_info *fi)
+static int xmp_ftruncate(const char *path, off_t size, struct fuse_file_info *fi)
 {
 	int res;
 
@@ -322,19 +364,24 @@ static int xmp_utimens(const char *path, const struct timespec ts[2])
 	tv[0].tv_usec = ts[0].tv_nsec / 1000;
 	tv[1].tv_sec = ts[1].tv_sec;
 	tv[1].tv_usec = ts[1].tv_nsec / 1000;
+    
+    char * real_path = resolve( path );
 
-	res = utimes(path, tv);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+	res = utimes( real_path, tv );
+    
+    free( real_path );
+    
+	if (res == -1)return -errno;
+    return 0;
+    
 }
 
 static int xmp_create(const char *path, mode_t mode, struct fuse_file_info *fi)
 {
 	int fd;
-
-	fd = open(path, fi->flags, mode);
+  char * real_path = resolve( path );
+	fd = open(real_path, fi->flags, mode);
+  free( real_path );
 	if (fd == -1)
 		return -errno;
 
@@ -342,16 +389,21 @@ static int xmp_create(const char *path, mode_t mode, struct fuse_file_info *fi)
 	return 0;
 }
 
-static int xmp_open(const char *path, struct fuse_file_info *fi)
-{
-	int fd;
-
-	fd = open(path, fi->flags);
-	if (fd == -1)
-		return -errno;
-
-	fi->fh = fd;
-	return 0;
+static int xmp_open(const char *path, struct fuse_file_info *fi){
+  
+  int fd;
+  char * real_path = resolve( path );
+  
+  fd = open( real_path, fi->flags );
+  
+  free( real_path );
+  
+  if (fd == -1)return -errno;
+  
+  fi->fh = fd;
+  
+  return 0;
+  
 }
 
 static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
@@ -380,15 +432,18 @@ static int xmp_write(const char *path, const char *buf, size_t size,
 	return res;
 }
 
-static int xmp_statfs(const char *path, struct statvfs *stbuf)
-{
-	int res;
-
-	res = statvfs(path, stbuf);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+static int xmp_statfs(const char *path, struct statvfs *stbuf){
+  
+  int res;
+  char * real_path = resolve( path );
+  
+  res = statvfs( real_path, stbuf );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
 static int xmp_flush(const char *path, struct fuse_file_info *fi)
@@ -438,108 +493,129 @@ static int xmp_fsync(const char *path, int isdatasync,
 
 #ifdef HAVE_SETXATTR
 /* xattr operations are optional and can safely be left unimplemented */
-static int xmp_setxattr(const char *path, const char *name, const char *value,
-			size_t size, int flags)
-{
-	int res = lsetxattr(path, name, value, size, flags);
-	if (res == -1)
-		return -errno;
-	return 0;
+static int xmp_setxattr(const char *path, const char *name, const char *value, size_t size, int flags){
+  
+  char * real_path = resolve( path );
+  int res = lsetxattr( real_path, name, value, size, flags );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 
-static int xmp_getxattr(const char *path, const char *name, char *value,
-			size_t size)
-{
-	int res = lgetxattr(path, name, value, size);
-	if (res == -1)
-		return -errno;
-	return res;
+static int xmp_getxattr(const char *path, const char *name, char *value, size_t size){
+  
+  char * real_path = resolve( path );
+  int res = lgetxattr( real_path, name, value, size );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return res;
+  
 }
 
-static int xmp_listxattr(const char *path, char *list, size_t size)
-{
-	int res = llistxattr(path, list, size);
-	if (res == -1)
-		return -errno;
-	return res;
+static int xmp_listxattr(const char *path, char *list, size_t size){
+  
+  char * real_path = resolve( path );
+  int res = llistxattr( real_path, list, size );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return res;
+  
 }
 
-static int xmp_removexattr(const char *path, const char *name)
-{
-	int res = lremovexattr(path, name);
-	if (res == -1)
-		return -errno;
-	return 0;
+static int xmp_removexattr(const char *path, const char *name){
+  
+  char * real_path = resolve( path );
+  int res = lremovexattr( real_path, name );
+  
+  free( real_path );
+  
+  if (res == -1)return -errno;
+  return 0;
+  
 }
 #endif /* HAVE_SETXATTR */
 
-static int xmp_lock(const char *path, struct fuse_file_info *fi, int cmd,
-		    struct flock *lock)
-{
-	(void) path;
-
-	return ulockmgr_op(fi->fh, cmd, lock, &fi->lock_owner,
-			   sizeof(fi->lock_owner));
+static int xmp_lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *lock){
+  
+  (void) path;
+  
+  return ulockmgr_op(fi->fh, cmd, lock, &fi->lock_owner, sizeof(fi->lock_owner));
+  
 }
 
 static struct fuse_operations xmp_oper = {
-	.getattr	= xmp_getattr,
-	.fgetattr	= xmp_fgetattr,
-	.access		= xmp_access,
-	.readlink	= xmp_readlink,
-	.opendir	= xmp_opendir,
-	.readdir	= xmp_readdir,
-	.releasedir	= xmp_releasedir,
-	.mknod		= xmp_mknod,
-	.mkdir		= xmp_mkdir,
-	.symlink	= xmp_symlink,
-	.unlink		= xmp_unlink,
-	.rmdir		= xmp_rmdir,
-	.rename		= xmp_rename,
-	.link		= xmp_link,
-	.chmod		= xmp_chmod,
-	.chown		= xmp_chown,
-	.truncate	= xmp_truncate,
-	.ftruncate	= xmp_ftruncate,
-	.utimens	= xmp_utimens,
-	.create		= xmp_create,
-	.open		= xmp_open,
-	.read		= xmp_read,
-	.write		= xmp_write,
-	.statfs		= xmp_statfs,
-	.flush		= xmp_flush,
-	.release	= xmp_release,
-	.fsync		= xmp_fsync,
+  .getattr	= xmp_getattr,
+  .fgetattr	= xmp_fgetattr,
+  .access		= xmp_access,
+  .readlink	= xmp_readlink,
+  .readdir	= xmp_readdir,
+  .mknod		= xmp_mknod,
+  .mkdir		= xmp_mkdir,
+  .symlink	= xmp_symlink,
+  .unlink		= xmp_unlink,
+  .rmdir		= xmp_rmdir,
+  .rename		= xmp_rename,
+  .link		= xmp_link,
+  .chmod		= xmp_chmod,
+  .chown		= xmp_chown,
+  .truncate	= xmp_truncate,
+  .ftruncate	= xmp_ftruncate,
+  .utimens	= xmp_utimens,
+  .create		= xmp_create,
+  .open		= xmp_open,
+  .read		= xmp_read,
+  .write		= xmp_write,
+  .statfs		= xmp_statfs,
+  .flush		= xmp_flush,
+  .release	= xmp_release,
+  .fsync		= xmp_fsync,
 #ifdef HAVE_SETXATTR
-	.setxattr	= xmp_setxattr,
-	.getxattr	= xmp_getxattr,
-	.listxattr	= xmp_listxattr,
-	.removexattr	= xmp_removexattr,
+  .setxattr	= xmp_setxattr,
+  .getxattr	= xmp_getxattr,
+  .listxattr	= xmp_listxattr,
+  .removexattr	= xmp_removexattr,
 #endif
-	.lock		= xmp_lock,
+  .lock		= xmp_lock,
 
-	.flag_nullpath_ok = 1,
+  .flag_nullpath_ok = 1,
 };
 
 int main(int argc, char *argv[])
 {
   
+  int i;
+  
+  for( i = 0; i < argc; i++ ){
+    printf("%i - \"%s\"\n", i, argv[i] );
+  }
+  
+//   return 0;
+  
   int success = 1;  
-  char * prospective_root = preparse_opts( &argc, argv );
+  list_t * fuse_args = list_t_new();
+  char * prospective_root = preparse_opts( &argc, argv, fuse_args );
    
   success = success && initialize_environment( prospective_root );
   success = success && initialize_redirect( );
   success = success && initialize_regex( );
   success = success && initialize_default_hidden_lists();
   
+//   puts( resolve( "/Music/Northern Exposure: III/Track 1.mp3" ) );
+//   return 0;
+  
   if( success ){
   
-    struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
-    parse( &args, argc, argv );
-    success = fuse_main(args.argc, args.argv, &xmp_oper, NULL);
     
-    /** free arguments */
-    fuse_opt_free_args(&args);
+    success = fuse_main( fuse_args->length, fuse_args->data, &xmp_oper, NULL);
+    
+    
     
   }
 

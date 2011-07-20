@@ -178,7 +178,7 @@ list_t * list_t_new_from_file( char * path ){
   
 }
 
-list_t * list_t_new_listdir( char * path ){
+list_t * list_t_new_listdir( const char * path ){
 
   DIR           * directory = opendir( path );
   struct dirent * entry;

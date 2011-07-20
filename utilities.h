@@ -17,7 +17,7 @@ char * substring( const char * string, int start, int end );
 
 list_t * list_t_new( );
 list_t * list_t_new_from_file( char * path );
-list_t * list_t_new_listdir( char * path );
+list_t * list_t_new_listdir( const char * path );
 void     list_t_append( list_t * list, char * string );
 void     list_t_append_unique( list_t * list, char * string );
 void     list_t_extend( list_t * list, list_t * second );
