@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import subprocess
+import subprocess, sys, os, shutil
 
 def call( command ):
   
@@ -29,7 +29,8 @@ class GCC:
     self.args.extend(["-o", out_name])
     print " ".join( self.args )
     gcc = subprocess.Popen( self.args )
-    gcc.wait()
+    return gcc.wait() == 0
+    
     
 if __name__ == '__main__':
   
@@ -43,4 +44,11 @@ if __name__ == '__main__':
   gcc.addFile("resolve.c")
   gcc.addFile("utilities.c")
   gcc.addFile("winhomefs0.4.c")
-  gcc.compile("winhomefs")
+  
+  if gcc.compile("winhomefs") and 'install' in sys.argv:
+    if os.getuid() == 0:
+      shutil.copy("winhomefs", "/usr/local/bin/winhomefs")
+      
+      
+      
+    

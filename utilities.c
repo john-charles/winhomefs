@@ -79,6 +79,31 @@ int startswith( const char * string, const char * term ){
   
 }
   
+int endswith( const char * string, const char * term ){
+  
+  int string_len = strlen( string ), term_len = strlen( term );
+  
+  if( string_len < term_len ) return 0;
+  
+  int src_offset = string_len - term_len;
+  
+  int i, match = 1;
+  
+  for( i = 0; i < term_len; i++ ){
+    
+    if( string[ i + src_offset ] != term[i] ){
+      
+      match = 0;
+      
+    }
+    
+  }
+  
+  return match;
+  
+}
+  
+  
   
 
 char * cat( char * str1, const char * str2, int do_free ){

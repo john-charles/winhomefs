@@ -57,6 +57,8 @@ redirect_t * my_videos;
 
 static int xmp_getattr(const char *path, struct stat *stbuf){
   
+  /* NOTE: use regex to update this to cope with magic files... */
+  
   int res;
   char * rp = resolve( path );
   res = lstat(rp, stbuf);
@@ -107,66 +109,86 @@ static int xmp_readlink(const char *path, char *buf, size_t size){
   
 }
 
-static int fs_readdir_root( const char * real_path, void * buf, fuse_fill_dir_t filler, off_t offset ){
+static list_t * fs_readdir_loadroot( ){
   
-  list_t * dotd = list_t_new_listdir( winredirect );
-  list_t * root = list_t_new_listdir( real_path );
+  list_t * contents = list_t_new_listdir( root_path );
+  list_t * dotfiles = list_t_new_listdir( winredirect );
   
-  list_t_extend( root, dotd );
-  list_t_free( dotd );
+  list_t_extend_unique( contents, dotfiles );
+  list_t_free( dotfiles );
+  
+  return contents;
+  
+}
+
+static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * contents ){
   
   list_t * hidden = get_hidden_list( real_path );
+  list_t * result = list_t_new();
+
+  int i, hidden_found = 0;
   
-  if( offset < root->length ){
+  for( i = 0; i < contents->length; i++ ){
     
-    int i;
-  
-    for( i = offset; i < root->length; i++ ){
-    
-      if( !list_t_contains( hidden, root->data[i] ) ){
-        filler( buf, root->data[i], 0, i +1 );
-      }
+    if( !list_t_contains( hidden, contents->data[i] ) ){
+      
+      list_t_append_unique( result, contents->data[i] );
+      
+    } else {
+      
+      hidden_found = hidden_found + 1;
+      
     }
+    
   }
   
-  list_t_free( root );
-  list_t_free( hidden );
-  return 0;
+  if( hidden_found > 0 ){
+    
+    char * count_name = (char*)malloc( 50 );
+    sprintf( count_name, ".hidden_count_is_%i", hidden_found );
+    list_t_append( result, count_name );
+    free( count_name );
+    
+  }
   
-} 
+  list_t_free( hidden );
+  list_t_free( contents );
+  
+  return result;
+  
+}
+  
+
   
   
 
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
   
   char * real_path = resolve( path );
-  int return_val = 0;
+    
+  list_t * entries = 0;
   
   if( strcmp( path, "/" ) == 0 ){
     
-    return_val = fs_readdir_root( real_path, buf, filler, offset );
-       
+    entries = fs_readdir_loadroot( );
     
   } else {
     
-    list_t * entries = list_t_new_listdir( real_path );
-    list_t * hidden  = get_hidden_list( real_path );
+    entries = list_t_new_listdir( real_path );
     
-    int i;
+  }  
+  
+  entries = fs_readdir_purge_hidden( real_path, entries );
+  
+  int i;
+  
+  for( i = offset; i < entries->length; i++ ){
     
-    for( i = offset; i < entries->length; i++ ){
-      
-      if( !list_t_contains( hidden, entries->data[i] ) ){
-        filler( buf, entries->data[i], 0, i+1 );
-      }
-    }
-    
-    list_t_free( hidden );
-    list_t_free( entries );
+    filler( buf, entries->data[i], 0, i+1 );
     
   }
   
-  
+  list_t_free( entries );
   free( real_path );
   return 0;
   
@@ -230,15 +252,19 @@ static int xmp_unlink(const char *path){
 
 static int xmp_rmdir(const char *path){
   
-  if( strcmp( path, "/AppData" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/AppData" ) == 0 )         return -EPERM;
   if( strcmp( path, "/Application Data") == 0 ) return -EPERM;
-  if( strcmp( path, "/Desktop" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Downloads" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Documents" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Music" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Pictures" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Projects" ) == 0 ) return -EPERM;
-  if( strcmp( path, "/Videos" ) == 0 ) return -EPERM;
+  if( strcmp( path, "/Contacts" ) == 0 )        return -EPERM;
+  if( strcmp( path, "/Desktop" ) == 0 )         return -EPERM;
+  if( strcmp( path, "/Downloads" ) == 0 )       return -EPERM;
+  if( strcmp( path, "/Documents" ) == 0 )       return -EPERM;
+  if( strcmp( path, "/Favorites" ) == 0 )       return -EPERM;
+  if( strcmp( path, "/Links" ) == 0 )           return -EPERM;
+  if( strcmp( path, "/Music" ) == 0 )           return -EPERM;
+  if( strcmp( path, "/Pictures" ) == 0 )        return -EPERM;
+  if( strcmp( path, "/Projects" ) == 0 )        return -EPERM;
+  if( strcmp( path, "/Saved Games" ) == 0 )     return -EPERM;
+  if( strcmp( path, "/Videos" ) == 0 )          return -EPERM;
   
   int res;
   char * real_path = resolve( path );
@@ -254,15 +280,16 @@ static int xmp_rmdir(const char *path){
 
 static int xmp_symlink(const char *from, const char *to){
   
-  char * real_from = resolve( from );
+  char * real_to = resolve( to );
   int res;
+  printf("winhomefs.c: xmp_symlink: from = %s to = %s\n", from, to );
+  printf("winhomefs.c: xmp_symlink: real_to = %s\n", real_to );
   /* NOTE: I have not yet decided how I want to my symlinks work... */
-  res = symlink( real_from, to );
+  res = symlink( from, real_to );
   
-  free( real_from );
+  free( real_to );
   
-  if (res == -1)
-    return -errno;
+  if (res == -1) return -errno;
 
   return 0;
 }
@@ -551,11 +578,13 @@ static int xmp_lock(const char *path, struct fuse_file_info *fi, int cmd, struct
 }
 
 static struct fuse_operations xmp_oper = {
-  .getattr	= xmp_getattr,
-  .fgetattr	= xmp_fgetattr,
-  .access		= xmp_access,
-  .readlink	= xmp_readlink,
-  .readdir	= xmp_readdir,
+  
+  .getattr  = xmp_getattr,
+  .fgetattr = xmp_fgetattr,
+  .access   = xmp_access,
+  .readlink = xmp_readlink,
+  .readdir  = xmp_readdir,
+  
   .mknod		= xmp_mknod,
   .mkdir		= xmp_mkdir,
   .symlink	= xmp_symlink,

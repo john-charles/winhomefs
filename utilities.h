@@ -13,6 +13,7 @@ typedef struct {
 } list_t;
 
 int    startswith( const char * string, const char * term );
+int    endswith( const char * string, const char * term );
 char * substring( const char * string, int start, int end );
 
 list_t * list_t_new( );
