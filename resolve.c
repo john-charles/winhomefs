@@ -1,6 +1,8 @@
 #include "resolve.h"
 #include "utilities.h"
 
+#include <stdlib.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -13,6 +15,10 @@ extern redirect_t * my_music;
 extern redirect_t * my_pictures;
 extern redirect_t * my_videos;
 
+int file_exists(char *filename){
+  struct stat buffer;   
+  return ( stat(filename, &buffer) == 0);
+}
 
 
 char * resolve_vista( const char * path ){
@@ -54,12 +60,18 @@ char * resolve_vista( const char * path ){
     
   }
   
-  int i;
-  
-  for( i = 0; i < strlen( result ); i++ ){
+  // This is incase a previous process has created a file which 
+  // contains a : in the name... that way the file will point to 
+  // the real file, not the version with an _ in it.
+  if( !file_exists( result ) ){
     
-    if( result[i] == ':' ) result[i] = '_';
+    int i;
+    
+    for( i = 0; i < strlen( result ); i++ ){
       
+      if( result[i] == ':' ) result[i] = '_';
+      
+    }
   }
   
   printf("resolve.c: resolve(%s) --> %s\n", path, result );

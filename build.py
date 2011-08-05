@@ -34,7 +34,7 @@ class GCC:
     
 if __name__ == '__main__':
   
-  gcc = GCC(["gcc","-g","-Wall"])
+  gcc = GCC(["gcc","-g","-Wall","-pg"])
   gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
   gcc.addFile("-lulockmgr")
   gcc.addFile("argsparse.c")

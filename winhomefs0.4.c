@@ -58,11 +58,12 @@ redirect_t * my_videos;
 static int xmp_getattr(const char *path, struct stat *stbuf){
   
   /* NOTE: use regex to update this to cope with magic files... */
-  
+  printf("...getattr: path is %s\n", path );
   int res;
   char * rp = resolve( path );
   res = lstat(rp, stbuf);
   free(rp);
+  printf("...getattr: res = %i, errno=%i\n", res, errno );
   if (res == -1)
     return -errno;
   return 0;
@@ -123,6 +124,13 @@ static list_t * fs_readdir_loadroot( ){
 
 static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * contents ){
   
+  if( list_t_contains( contents, ".show-hidden" ) ||
+      list_t_contains( contents, ".show_hidden" ) ){
+    
+    return contents;
+    
+  }
+  
   list_t * hidden = get_hidden_list( real_path );
   list_t * result = list_t_new();
 
@@ -130,22 +138,31 @@ static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * conten
   
   for( i = 0; i < contents->length; i++ ){
     
+    printf("...purge_hidden: is file %s hidden?\n", contents->data[i] );
+    
     if( !list_t_contains( hidden, contents->data[i] ) ){
-      
+      printf("...purge_hidden: file %s is not hidden!\n", contents->data[i] );
       list_t_append_unique( result, contents->data[i] );
       
     } else {
-      
+      printf("...purge_hidden: file %s is hidden!\n", contents->data[i] );
       hidden_found = hidden_found + 1;
       
     }
+    
+    if( list_t_contains( result, contents->data[i] ) ){
+      printf("...purge_hidden: file %s is in result!\n", contents->data[i] );
+    } else {
+      printf("...purge_hidden: file %s is NOT in result!\n", contents->data[i] );
+    }
+      
     
   }
   
   if( hidden_found > 0 ){
     
     char * count_name = (char*)malloc( 50 );
-    sprintf( count_name, ".hidden_count_is_%i", hidden_found );
+    sprintf( count_name, ". %i hidden files found", hidden_found );
     list_t_append( result, count_name );
     free( count_name );
     
@@ -158,41 +175,79 @@ static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * conten
   
 }
   
+typedef struct {
+  
+  list_t * contents;
+  off_t    offset;
+  
+} directory_t;
 
+static int fs_opendir(const char * path, struct fuse_file_info * info ){
+  
+  /* TODO Make sure that this all compiles and works.... */
+  char        * real_path = resolve( path );
+  directory_t * directory = malloc( sizeof( directory_t ) );
+  
+  if( strcmp( path, "/" ) == 0 ){
+    
+    directory->contents = fs_readdir_loadroot();
+    
+  } else {
+    
+    directory->contents = list_t_new_listdir( real_path );
+    
+  }
+  
+  directory->contents = fs_readdir_purge_hidden( real_path, directory->contents );  
+  directory->offset = 0;
+  
+  info->fh = (unsigned long) directory;
+  
+  return 0;
+  
+}
+    
+    
+    
+    
   
   
 
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
   
-  char * real_path = resolve( path );
-    
-  list_t * entries = 0;
+  //NOTE: fix this so that any return to offset 0 causes a re-read of the dir contents...
   
-  if( strcmp( path, "/" ) == 0 ){
-    
-    entries = fs_readdir_loadroot( );
-    
-  } else {
-    
-    entries = list_t_new_listdir( real_path );
-    
-  }  
+  directory_t * directory = (directory_t *) (uintptr_t) fi->fh;
   
-  entries = fs_readdir_purge_hidden( real_path, entries );
+//   list_t_print( entries );
   
   int i;
   
-  for( i = offset; i < entries->length; i++ ){
-    
-    filler( buf, entries->data[i], 0, i+1 );
+  for( i = offset; i < directory->contents->length; i++ ){
+    printf("...readdir: filling in file %s\n", directory->contents->data[i] );
+    filler( buf, directory->contents->data[i], 0, i+1 );
     
   }
   
-  list_t_free( entries );
-  free( real_path );
+  directory->offset = i;
+  
   return 0;
   
 }
+
+static int fs_releasedir(const char * path, struct fuse_file_info * fi){
+  
+  directory_t * directory = (directory_t *) (uintptr_t) fi->fh;
+  
+  list_t_free( directory->contents );
+  
+  free( directory );
+  
+  return 0;
+  
+}
+  
+  
 
 
 static int xmp_mknod(const char * ipath, mode_t mode, dev_t rdev)
@@ -583,7 +638,9 @@ static struct fuse_operations xmp_oper = {
   .fgetattr = xmp_fgetattr,
   .access   = xmp_access,
   .readlink = xmp_readlink,
+  .opendir  = fs_opendir,
   .readdir  = xmp_readdir,
+  .releasedir = fs_releasedir,
   
   .mknod		= xmp_mknod,
   .mkdir		= xmp_mkdir,
@@ -626,6 +683,14 @@ int main(int argc, char *argv[])
   }
   
 //   return 0;
+
+//   list_t * d = list_t_new_listdir("/mnt/Personal/Users/john-charles/Music/Collection/Compilations/");
+//   
+//   for( i = 0; i < d->length; i++ ){
+//     
+//     puts( d->data[i] );
+//     
+//   }
   
   int success = 1;  
   list_t * fuse_args = list_t_new();

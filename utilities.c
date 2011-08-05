@@ -12,7 +12,7 @@ int compare_strings( const void * a, const void * b ){
   const char ** sa = ( const char ** ) a;
   const char ** sb = ( const char ** ) b;
   
-  return strcmp( *sb, *sa );
+  return strcmp( *sa, *sb );
    
 }
 
