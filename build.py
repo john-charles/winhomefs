@@ -34,9 +34,11 @@ class GCC:
     
 if __name__ == '__main__':
   
+  cflags = call("pkg-config fuse --libs --cflags").split()
+  
+  print cflags
+  
   gcc = GCC(["gcc","-g","-Wall","-pg"])
-  gcc.addPKG(call("pkg-config fuse --cflags --libs").split())
-  gcc.addFile("-lulockmgr")
   gcc.addFile("argsparse.c")
   gcc.addFile("hidden.c")
   #gcc.addFile("fs.c")
@@ -44,6 +46,8 @@ if __name__ == '__main__':
   gcc.addFile("resolve.c")
   gcc.addFile("utilities.c")
   gcc.addFile("winhomefs0.4.c")
+  gcc.addPKG(cflags)
+  gcc.addFile("-lulockmgr")
   
   if gcc.compile("winhomefs") and 'install' in sys.argv:
     if os.getuid() == 0:

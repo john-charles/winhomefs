@@ -30,6 +30,10 @@ char * resolve_vista( const char * path ){
     
     result = cat( root_path, path, 0 );
     
+  } else if( strncmp( path, "/...", 4 ) == 0 ){
+      
+      result = cat( root_path, path, 0 );
+      
   } else if( strncmp( path, "/.", 2 ) == 0 ){
     
     result = cat( winredirect, path, 0 );

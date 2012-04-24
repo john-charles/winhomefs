@@ -8,6 +8,12 @@
 
 char * preparse_opts( int * argc, char * argv[], list_t * fuse_args ){
   
+  if ( *argc < 3 ){
+    puts("Sorry invalid number of arguments...");
+    puts("Expecting exec_name /path/to/source/directory /path/to/mountpoint");
+    exit(1);
+  }
+  
   char * root = 0;
   
   int i;

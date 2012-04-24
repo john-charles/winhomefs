@@ -1,12 +1,18 @@
 /*
-  FUSE: Filesystem in Userspace
-  Copyright (C) 2001-2007  Miklos Szeredi <miklos@szeredi.hu>
-
-  This program can be distributed under the terms of the GNU GPL.
-  See the file COPYING.
-
-  gcc -Wall `pkg-config fuse --cflags --libs` -lulockmgr fusexmp_fh.c -o fusexmp_fh
-*/
+ * WINHOMEFS This is a filesystem use for mouting
+ * and sharing a windows home directory with a linux
+ * instance without creating the big mess.
+ * 
+ * This file system is written by John-Charles D. Sokolow
+ * Copyright (C) 2011-1012 John-Charles D. Sokolow <john.charles.sokolow@gmail.com>
+ * 
+ * Based heavily on the example fuse file system "fusexmp_fh.c"
+ * Copyright (C) 2001-2007  Miklos Szeredi <miklos@szeredi.hu>
+ * 
+ * This program can be distributed under the terms of the GNU GPL.
+ * See the file COPYING.
+ * 
+ */
 
 #define FUSE_USE_VERSION 26
 
@@ -26,6 +32,7 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <errno.h>
+#include <libgen.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #ifdef HAVE_SETXATTR
@@ -57,63 +64,131 @@ redirect_t * my_videos;
 
 static int xmp_getattr(const char *path, struct stat *stbuf){
   
-  /* NOTE: use regex to update this to cope with magic files... */
-  printf("...getattr: path is %s\n", path );
-  int res;
-  char * rp = resolve( path );
-  res = lstat(rp, stbuf);
-  free(rp);
-  printf("...getattr: res = %i, errno=%i\n", res, errno );
-  if (res == -1)
-    return -errno;
-  return 0;
+    int res;
+    
+    char * rp = resolve( path );
+    char * rd = dirname( cat( rp, "", 0));
+    
+    memset( stbuf, 0, sizeof(*stbuf));
+    
+    if ( endswith( rp, ".fs-info")){
+        
+        lstat( rd, stbuf );
+        
+        stbuf->st_mode = 0;
+        stbuf->st_mode = stbuf->st_mode | S_IFREG;
+        stbuf->st_mode = stbuf->st_mode | S_IRUSR;        
+        
+        res = 0;
+        
+    } else if( endswith( rp, "/..." )){
+        
+        lstat( rd, stbuf );
+        
+        stbuf->st_mode = S_IFLNK;
+        stbuf->st_mode = stbuf->st_mode | S_IRWXU | S_IRWXG | S_IRWXO;
+        
+        res = 0;
+        
+    } else {
+        
+        res = lstat(rp, stbuf);
+        
+    }
+    
+    free(rp);
+    free(rd);
+    
+    if (res == -1) return -errno;
+    return 0;
 }
 
 static int xmp_fgetattr(const char *path, struct stat *stbuf, struct fuse_file_info *fi){
-	int res;
+    
+    int res;
 
-	(void) path;
+    (void) path;
 
-	res = fstat(fi->fh, stbuf);
-	if (res == -1)
-		return -errno;
-
-	return 0;
+    res = fstat(fi->fh, stbuf);
+    
+    if (res == -1) return -errno;
+    return 0;
 }
 
 static int xmp_access(const char *path, int mask){
-  int res;
-  char * rp = resolve( path );
   
-  res = access(rp, mask);
-  
-  free( rp );
-  
-  if (res == -1)
-    return -errno;
-  return 0;
+    int res;
+    char * rp = resolve( path );
+    
+    res = access(rp, mask);
+    
+    free( rp );
+    
+    if (res == -1) return -errno;
+    return 0;
+    
 }
+
 
 static int xmp_readlink(const char *path, char *buf, size_t size){
-  
-  char * rp = resolve( path );
-  int res;
-
-  res = readlink(rp, buf, size - 1);
-  
-  free( rp );
-  
-  if (res == -1)return -errno;
-  
-  buf[res] = '\0';
-  return 0;
+    
+    int res = 0;
+    
+    char * rp = resolve( path );
+    
+    if( endswith( path, "/..." ) ){
+        
+        rp = dirname( rp );
+        
+        // Note this should be safe to use here....
+        strcpy( buf, rp );
+        size = strlen( rp );
+        
+    } else {
+        
+        res = readlink(rp, buf, size - 1);
+        if( res != -1 ){
+            buf[res] = '\0';
+        }
+        
+    }
+    
+    free( rp );
+    
+    if (res == -1)return -errno;
+    return 0;
   
 }
+
+static list_t * get_root_contents( list_t * contents ){
+  
+  list_t * new_contents = list_t_new();
+  
+  char * elem = 0;
+  int i = 0;
+  for( i = 0; i < contents->length; i++ ){
+    
+    elem = contents->data[i];
+    if ( elem[0] != '.' ){
+      list_t_append( new_contents, elem );
+    }
+  }
+  
+  list_t_free( contents );
+  
+  return new_contents;
+  
+}
+      
+    
+    
 
 static list_t * fs_readdir_loadroot( ){
   
   list_t * contents = list_t_new_listdir( root_path );
   list_t * dotfiles = list_t_new_listdir( winredirect );
+  
+  contents = get_root_contents( contents );
   
   list_t_extend_unique( contents, dotfiles );
   list_t_free( dotfiles );
@@ -134,39 +209,19 @@ static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * conten
   list_t * hidden = get_hidden_list( real_path );
   list_t * result = list_t_new();
 
-  int i, hidden_found = 0;
+  int i;
   
   for( i = 0; i < contents->length; i++ ){
     
-    printf("...purge_hidden: is file %s hidden?\n", contents->data[i] );
-    
     if( !list_t_contains( hidden, contents->data[i] ) ){
-      printf("...purge_hidden: file %s is not hidden!\n", contents->data[i] );
+      
       list_t_append_unique( result, contents->data[i] );
       
-    } else {
-      printf("...purge_hidden: file %s is hidden!\n", contents->data[i] );
-      hidden_found = hidden_found + 1;
-      
-    }
-    
-    if( list_t_contains( result, contents->data[i] ) ){
-      printf("...purge_hidden: file %s is in result!\n", contents->data[i] );
-    } else {
-      printf("...purge_hidden: file %s is NOT in result!\n", contents->data[i] );
-    }
-      
+    }   
     
   }
   
-  if( hidden_found > 0 ){
-    
-    char * count_name = (char*)malloc( 50 );
-    sprintf( count_name, ". %i hidden files found", hidden_found );
-    list_t_append( result, count_name );
-    free( count_name );
-    
-  }
+  list_t_append_unique( result, ".fs-info" );
   
   list_t_free( hidden );
   list_t_free( contents );
@@ -198,7 +253,8 @@ static int fs_opendir(const char * path, struct fuse_file_info * info ){
     
   }
   
-  directory->contents = fs_readdir_purge_hidden( real_path, directory->contents );  
+  directory->contents = fs_readdir_purge_hidden( real_path, directory->contents );
+  list_t_append( directory->contents, "..." );
   directory->offset = 0;
   
   info->fh = (unsigned long) directory;
@@ -627,7 +683,7 @@ static int xmp_removexattr(const char *path, const char *name){
 static int xmp_lock(const char *path, struct fuse_file_info *fi, int cmd, struct flock *lock){
   
   (void) path;
-  
+  //return -ENOSYS; 
   return ulockmgr_op(fi->fh, cmd, lock, &fi->lock_owner, sizeof(fi->lock_owner));
   
 }
@@ -673,45 +729,34 @@ static struct fuse_operations xmp_oper = {
   .flag_nullpath_ok = 1,
 };
 
-int main(int argc, char *argv[])
-{
-  
-  int i;
-  
-  for( i = 0; i < argc; i++ ){
-    printf("%i - \"%s\"\n", i, argv[i] );
-  }
-  
-//   return 0;
 
-//   list_t * d = list_t_new_listdir("/mnt/Personal/Users/john-charles/Music/Collection/Compilations/");
-//   
-//   for( i = 0; i < d->length; i++ ){
-//     
-//     puts( d->data[i] );
-//     
-//   }
-  
-  int success = 1;  
-  list_t * fuse_args = list_t_new();
-  char * prospective_root = preparse_opts( &argc, argv, fuse_args );
-   
-  success = success && initialize_environment( prospective_root );
-  success = success && initialize_redirect( );
-  success = success && initialize_regex( );
-  success = success && initialize_default_hidden_lists();
-  
-//   puts( resolve( "/Music/Northern Exposure: III/Track 1.mp3" ) );
-//   return 0;
-  
-  if( success ){
-  
-    
-    success = fuse_main( fuse_args->length, fuse_args->data, &xmp_oper, NULL);
-    
-    
-    
-  }
 
-  return success;
+
+int main(int argc, char *argv[]){
+  
+    int success = 1;
+    
+    list_t * fuse_args = list_t_new();
+    
+    char * prospective_root = preparse_opts( &argc, argv, fuse_args );
+
+    success = success && initialize_environment( prospective_root );
+    success = success && initialize_redirect( );
+    success = success && initialize_regex( );
+    success = success && initialize_default_hidden_lists();
+
+    if( success ){
+        
+        success = fuse_main_real( 
+            fuse_args->length,
+            fuse_args->data,
+            &xmp_oper,
+            sizeof(xmp_oper),
+            NULL
+        );
+        
+    }
+
+    return success;
+    
 }
