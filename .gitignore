@@ -4,4 +4,8 @@ mnt/
 out.txt
 .fuse_hidden*
 *.out
-
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+install_manifest.txt
