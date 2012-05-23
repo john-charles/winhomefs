@@ -237,30 +237,50 @@ static list_t * fs_readdir_purge_hidden( const char * real_path, list_t * conten
   
 typedef struct {
   
+  char   * path;
   list_t * contents;
   off_t    offset;
   
 } directory_t;
 
+static int real_readdir(directory_t * directory){
+    
+    char * real_path = resolve(directory->path);
+    
+    if(directory->contents){
+        /** if there is pre-existing contents, we need to free them first! **/
+        list_t_free(directory->contents);
+    }
+    
+    if( strcmp(directory->path, "/" ) == 0 ){
+    
+        directory->contents = fs_readdir_loadroot();
+        
+    } else {
+        
+        directory->contents = list_t_new_listdir( real_path );
+        
+    }
+    
+    directory->contents = fs_readdir_purge_hidden( real_path, directory->contents );
+    list_t_append( directory->contents, "..." );
+    directory->offset = 0;
+    
+    free(real_path);
+    
+    return 0;
+    
+}    
+    
+
 static int fs_opendir(const char * path, struct fuse_file_info * info ){
   
-  /* TODO Make sure that this all compiles and works.... */
-  char        * real_path = resolve( path );
-  directory_t * directory = malloc( sizeof( directory_t ) );
+  directory_t * directory = malloc(sizeof(directory_t));
+  memset(directory, 0, sizeof(directory));
+  directory->path = (char*)malloc(strlen(path) + 1);
+  strcpy(directory->path, path);
   
-  if( strcmp( path, "/" ) == 0 ){
-    
-    directory->contents = fs_readdir_loadroot();
-    
-  } else {
-    
-    directory->contents = list_t_new_listdir( real_path );
-    
-  }
-  
-  directory->contents = fs_readdir_purge_hidden( real_path, directory->contents );
-  list_t_append( directory->contents, "..." );
-  directory->offset = 0;
+  real_readdir(directory); 
   
   info->fh = (unsigned long) directory;
   
@@ -276,18 +296,18 @@ static int fs_opendir(const char * path, struct fuse_file_info * info ){
 
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
   
-  //NOTE: fix this so that any return to offset 0 causes a re-read of the dir contents...
-  
   directory_t * directory = (directory_t *) (uintptr_t) fi->fh;
   
-//   list_t_print( entries );
+  if(offset == 0 && directory->offset > 0){
+      
+      real_readdir(directory);
+      
+  }
   
   int i;
   
   for( i = offset; i < directory->contents->length; i++ ){
-    printf("...readdir: filling in file %s\n", directory->contents->data[i] );
-    filler( buf, directory->contents->data[i], 0, i+1 );
-    
+    filler( buf, directory->contents->data[i], 0, i+1 );    
   }
   
   directory->offset = i;
@@ -300,9 +320,9 @@ static int fs_releasedir(const char * path, struct fuse_file_info * fi){
   
   directory_t * directory = (directory_t *) (uintptr_t) fi->fh;
   
-  list_t_free( directory->contents );
-  
-  free( directory );
+  list_t_free(directory->contents);
+  free(directory->path);
+  free(directory);
   
   return 0;
   
