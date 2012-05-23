@@ -297,21 +297,17 @@ static int fs_opendir(const char * path, struct fuse_file_info * info ){
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
   
   directory_t * directory = (directory_t *) (uintptr_t) fi->fh;
-  
-  if(offset == 0 && directory->offset > 0){
-      
-      real_readdir(directory);
-      
-  }
-  
   int i;
   
+  if(offset == 0 && directory->offset > 0){      
+      real_readdir(directory);      
+  }
+    
   for( i = offset; i < directory->contents->length; i++ ){
     filler( buf, directory->contents->data[i], 0, i+1 );    
   }
   
-  directory->offset = i;
-  
+  directory->offset = i;  
   return 0;
   
 }

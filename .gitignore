@@ -10,4 +10,6 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 *.kate-swp
+...
+.fs-info
 
